@@ -1,0 +1,1754 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Épreuves blanches — CE2 · 2025</title>
+<script data-goatcounter="https://space-learning.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<style>
+:root {
+  --noir:#1A1A1A;
+  --rouge:#C8311B;
+  --bleu:#1B3FA0;
+  --jaune:#F2C12E;
+  --vert:#2D9C5C;
+  --surface-1:#F7F5F0;
+  --surface-2:#fff;
+  --border:#E3E0D8;
+  --border-strong:#BBB;
+  --text-primary:#1A1A1A;
+  --text-muted:#777;
+  --radius:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:#FDFCF9;color:var(--text-primary)}
+button{cursor:pointer;font-family:inherit}
+input{font-family:inherit}
+
+/* HEADER */
+#app-header{
+  position:sticky;top:0;z-index:100;
+  background:var(--noir);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;gap:12px;
+}
+#header-left{display:flex;align-items:center;gap:12px}
+#header-text .brand{color:#fff;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:3px}
+#header-text .sub{color:#999;font-size:11px;letter-spacing:4px;margin-top:2px}
+#header-shapes{display:flex;align-items:center;gap:10px}
+#nav-link{
+  color:#ccc;font-size:12px;font-weight:600;text-decoration:none;
+  border:1px solid #555;border-radius:4px;padding:5px 10px;white-space:nowrap;
+}
+#nav-link:hover{background:#333;color:#fff}
+
+/* MAIN */
+#main{padding:24px 16px;max-width:800px;margin:0 auto}
+
+/* ACCUEIL */
+.page-title{font-size:22px;font-weight:800;margin-bottom:6px}
+.page-sub{font-size:14px;color:var(--text-muted);margin-bottom:24px}
+.ep-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:420px){.ep-grid{grid-template-columns:1fr}}
+.ep-card{
+  background:var(--surface-2);border:2px solid var(--border);
+  border-radius:var(--radius);padding:18px;
+  cursor:pointer;transition:box-shadow .15s,transform .1s;
+  display:flex;flex-direction:column;gap:8px;
+}
+.ep-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.12);transform:translateY(-2px)}
+.ep-card-num{font-size:12px;font-weight:700;color:var(--text-muted);letter-spacing:1px}
+.ep-card-name{font-size:17px;font-weight:700}
+.ep-card-desc{font-size:12px;color:var(--text-muted);line-height:1.4}
+.ep-card-score{
+  font-size:13px;font-weight:700;padding:3px 10px;border-radius:12px;
+  align-self:flex-start;margin-top:4px;
+  background:var(--border);color:var(--text-muted);
+}
+.ep-card-score.done{background:var(--vert);color:#fff}
+
+/* EPREUVE */
+#ep-screen{display:none;padding-bottom:40px}
+.ep-header{
+  background:var(--surface-1);border-bottom:1px solid var(--border);
+  padding:12px 16px;display:flex;align-items:center;gap:12px;
+}
+.ep-header-title{font-size:15px;font-weight:700;flex:1}
+.ep-num{font-size:13px;color:var(--text-muted)}
+.ep-progress-wrap{height:6px;background:var(--border);border-radius:4px}
+.ep-progress-fill{height:6px;border-radius:4px;background:var(--bleu);transition:width .3s}
+.ep-body{padding:20px 16px}
+
+.ex-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:6px}
+.ex-label.math{color:var(--bleu)}
+.ex-label.fr{color:var(--rouge)}
+.ex-question{font-size:16px;font-weight:600;line-height:1.5;margin-bottom:16px}
+.text-input{width:100%;border:2px solid var(--border);border-radius:var(--radius);padding:10px 12px;font-size:18px;margin-bottom:10px}
+.text-input:focus{outline:none;border-color:var(--bleu)}
+.validate-btn{background:var(--bleu);color:#fff;border:none;padding:10px 24px;border-radius:var(--radius);font-size:15px;font-weight:600}
+.validate-btn:hover:not(:disabled){opacity:.85}
+.validate-btn:disabled{opacity:.5;cursor:default}
+.play-btn{background:var(--surface-1);border:1px solid var(--border-strong);border-radius:var(--radius);padding:8px 18px;font-size:14px;margin-bottom:12px}
+.play-btn:hover:not(:disabled){background:var(--border)}
+.play-btn:disabled{opacity:.5;cursor:default}
+.dictee-hint{font-size:13px;color:var(--text-muted);margin-bottom:8px}
+.input-feedback{font-size:15px;margin-top:8px;font-weight:600}
+.input-feedback.ok{color:var(--vert)}
+.input-feedback.ko{color:var(--rouge)}
+.next-btn{background:var(--noir);color:#fff;border:none;padding:10px 24px;border-radius:var(--radius);font-size:15px;font-weight:600;margin-top:12px;display:none}
+.next-btn:hover{opacity:.85}
+
+/* OPERATIONS */
+.op-wrap{font-family:'Courier New',monospace;font-size:22px;text-align:right;background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius);padding:16px 24px;display:inline-block;margin-bottom:12px}
+.op-line{display:block;padding:2px 0;white-space:pre}
+.op-sep{border:none;border-top:2px solid var(--text-primary);margin:4px 0}
+
+/* DECOMPOSITION */
+.decomp-c{color:var(--rouge);font-weight:700}
+.decomp-d{color:var(--bleu);font-weight:700}
+.decomp-u{color:var(--vert);font-weight:700}
+
+/* GRADUEE */
+.grad-svg{display:block;width:100%;max-width:500px;margin-bottom:16px}
+
+/* ORDRE */
+.slots-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.slot{width:70px;height:50px;border:2px dashed var(--border-strong);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;cursor:pointer;transition:border-color .15s}
+.slot:hover{border-color:var(--bleu)}
+.slot.filled{border-style:solid;border-color:var(--bleu);background:var(--surface-1)}
+.tokens-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.token{background:var(--bleu);color:#fff;width:70px;height:50px;border:none;border-radius:var(--radius);font-size:18px;font-weight:700}
+.token.used,.token:disabled{opacity:.3;cursor:default}
+.clear-btn{background:var(--surface-1);border:1px solid var(--border-strong);padding:8px 18px;border-radius:var(--radius);font-size:14px;margin-right:8px}
+.clear-btn:hover{background:var(--border)}
+.val-ord-btn{background:var(--vert);color:#fff;border:none;padding:8px 18px;border-radius:var(--radius);font-size:14px;font-weight:600;display:none}
+
+/* MOTS CLIQUABLES / CHOIX */
+.phrase-words{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.word-btn{background:var(--surface-1);border:2px solid var(--border);border-radius:6px;padding:6px 12px;font-size:16px;font-weight:500;transition:all .15s}
+.word-btn:hover:not(:disabled){border-color:var(--bleu);background:#eef3ff}
+.word-btn.selected{background:#eef3ff;border-color:var(--bleu);color:var(--bleu)}
+.word-btn:disabled{cursor:default}
+.word-btn.correct{background:#e8f7ee;border-color:var(--vert);color:var(--vert)}
+.word-btn.wrong{background:#fdecea;border-color:var(--rouge);color:var(--rouge)}
+.confirm-sel-btn{background:var(--vert);color:#fff;border:none;padding:8px 20px;border-radius:var(--radius);font-size:14px;font-weight:600}
+.choice-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.choice-btn{background:var(--surface-1);border:2px solid var(--border);border-radius:var(--radius);padding:10px 16px;font-size:15px;transition:all .15s;flex:1;min-width:110px}
+.choice-btn:hover:not(:disabled){border-color:var(--border-strong);background:#fff}
+.choice-btn.correct{background:#e8f7ee;border-color:var(--vert);color:var(--vert)}
+.choice-btn.wrong{background:#fdecea;border-color:var(--rouge);color:var(--rouge)}
+.choice-btn:disabled{cursor:default}
+
+/* CHRONO */
+.chrono-wrap{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.chrono-bar-wrap{flex:1;background:var(--border);border-radius:4px;height:8px}
+.chrono-bar-fill{height:8px;border-radius:4px;background:var(--bleu);transition:width .5s linear,background .5s}
+.live-score{font-size:15px;font-weight:600;color:var(--text-muted)}
+
+/* FLUENCE */
+.fluence-text{font-size:17px;line-height:2;background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px}
+.fluence-line{display:flex;align-items:baseline;gap:8px}
+.fluence-line-words{flex:1}
+.fluence-line-count{font-size:12px;color:var(--text-muted);flex-shrink:0;text-align:right;min-width:28px}
+.fluence-word{cursor:default}
+.fluence-word.clickable{cursor:pointer;border-bottom:2px solid transparent}
+.fluence-word.clickable:hover{border-bottom-color:var(--bleu)}
+.fluence-word.selected{background:var(--jaune);border-radius:2px}
+.fluence-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.fluence-start-btn{background:var(--vert);color:#fff;border:none;padding:10px 20px;border-radius:var(--radius);font-size:15px;font-weight:600}
+.fluence-start-btn:disabled{opacity:.5;cursor:default}
+.fluence-bar-wrap{flex:1;background:var(--border);border-radius:4px;height:8px;min-width:80px}
+.fluence-bar-fill{height:8px;border-radius:4px;background:var(--vert);transition:width .5s linear}
+.fluence-timer{font-size:18px;font-weight:700;min-width:40px}
+
+/* SCORE FINAL */
+#score-screen{display:none;padding:30px 16px 40px;max-width:600px;margin:0 auto}
+.final-title{font-size:22px;font-weight:800;margin-bottom:4px}
+.final-sub{font-size:14px;color:var(--text-muted);margin-bottom:24px}
+.final-score-big{font-size:64px;font-weight:900;color:var(--bleu);line-height:1}
+.final-score-label{font-size:16px;color:var(--text-muted);margin:6px 0 20px}
+.final-bar-wrap{background:var(--border);border-radius:6px;height:10px;margin-bottom:24px}
+.final-bar-fill{height:10px;border-radius:6px;background:var(--bleu);transition:width .5s}
+.final-list{list-style:none;margin-bottom:24px}
+.final-list li{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-radius:var(--radius);font-size:14px;margin-bottom:5px;background:var(--surface-1);border:1px solid var(--border)}
+.final-list .li-label{font-weight:600}
+.final-list .li-score{font-weight:700;font-size:15px}
+.li-score.all-good{color:var(--vert)}
+.li-score.partial{color:#b8860b}
+.li-score.bad{color:var(--rouge)}
+.final-msg{font-size:18px;font-weight:700;margin-bottom:20px}
+.back-home-btn{background:var(--noir);color:#fff;border:none;padding:12px 28px;border-radius:var(--radius);font-size:15px;font-weight:600}
+.back-home-btn:hover{opacity:.85}
+</style>
+</head>
+<body>
+
+<header id="app-header">
+  <div id="header-left">
+    <svg id="logo-svg" width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="20" cy="20" r="6" fill="#F2C12E"/>
+      <ellipse cx="20" cy="20" rx="18" ry="7" fill="none" stroke="#1B3FA0" stroke-width="2"/>
+      <ellipse cx="20" cy="20" rx="18" ry="7" fill="none" stroke="#1B3FA0" stroke-width="2" transform="rotate(60 20 20)"/>
+      <ellipse cx="20" cy="20" rx="18" ry="7" fill="none" stroke="#1B3FA0" stroke-width="2" transform="rotate(-60 20 20)"/>
+      <circle cx="38" cy="20" r="2.5" fill="#C8311B"/>
+      <circle cx="29" cy="5.3" r="2.5" fill="#F2C12E"/>
+      <circle cx="11" cy="34.7" r="2.5" fill="#2D9C5C"/>
+    </svg>
+    <div id="header-text">
+      <div class="brand">Space Learning</div>
+      <div class="sub">CE2 · 2025</div>
+    </div>
+  </div>
+  <div id="header-shapes">
+    <a href="index.html" id="home-link" style="color:#ccc;font-size:12px;font-weight:600;text-decoration:none;border:1px solid #555;border-radius:4px;padding:5px 10px;white-space:nowrap;" onmouseover="this.style.background='#333';this.style.color='#fff'" onmouseout="this.style.background='';this.style.color='#ccc'">🏠 Niveaux</a>
+    <a href="entrainement.html" id="nav-link">← Entraînement</a>
+    <a href="#" id="progress-link" onclick="showProgressScreen();return false;" style="color:#ccc;font-size:12px;font-weight:600;text-decoration:none;border:1px solid #555;border-radius:4px;padding:5px 10px;white-space:nowrap;" onmouseover="this.style.background='#333';this.style.color='#fff'" onmouseout="this.style.background='';this.style.color='#ccc'">📊 Mes progrès</a>
+    <svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="#1B3FA0"/></svg>
+    <svg width="13" height="13" viewBox="0 0 13 13"><rect width="13" height="13" fill="#C8311B"/></svg>
+    <svg width="14" height="12" viewBox="0 0 14 12"><polygon points="7,0 14,12 0,12" fill="#F2C12E"/></svg>
+  </div>
+</header>
+
+<div id="main">
+  <div id="home-screen">
+    <div class="page-title">Épreuves blanches</div>
+    <div class="page-sub">5 épreuves complètes de 18 exercices · Révisions Circulaires CE2</div>
+    <div class="ep-grid" id="ep-grid"></div>
+  </div>
+
+  <div id="sommaire-screen" style="display:none;padding:20px 16px 40px;max-width:620px;margin:0 auto">
+    <div class="page-title" id="som-title">Épreuve 1</div>
+    <div class="page-sub">18 exercices — clique sur un exercice pour commencer à cet endroit, ou fais toute l'épreuve dans l'ordre.</div>
+    <button class="next-btn" id="som-start" style="display:inline-block;margin:14px 0 18px">▶ Commencer l'épreuve (M1 → F8)</button>
+    <div id="som-list"></div>
+    <button class="back-home-btn" id="som-back" style="margin-top:18px">← Retour aux épreuves</button>
+  </div>
+
+  <div id="ep-screen">
+    <div class="ep-header">
+      <div class="ep-header-title" id="ep-title">Épreuve 1</div>
+      <div class="ep-num" id="ep-num">Exercice 1 / 18</div>
+    </div>
+    <div style="padding:8px 16px 4px">
+      <div class="ep-progress-wrap"><div class="ep-progress-fill" id="ep-prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="ep-body" id="ep-body"></div>
+  </div>
+
+  <div id="score-screen">
+    <div class="final-title" id="fn-title"></div>
+    <div class="final-sub">Score détaillé par exercice</div>
+    <div class="final-score-big" id="fn-big"></div>
+    <div class="final-score-label" id="fn-label"></div>
+    <div class="final-bar-wrap"><div class="final-bar-fill" id="fn-bar"></div></div>
+    <ul class="final-list" id="fn-list"></ul>
+    <div class="final-msg" id="fn-msg"></div>
+    <button class="back-home-btn" id="back-home-btn">← Retour aux épreuves</button>
+  </div>
+
+  <div id="progress-screen" style="display:none;padding:24px 16px 40px;max-width:900px;margin:0 auto">
+    <button onclick="goHome()" style="background:transparent;border:1px solid var(--border-strong);color:var(--text-primary);padding:6px 14px;border-radius:4px;font-size:13px;margin-bottom:16px">← Retour</button>
+    <div class="page-title">📊 Mes progrès</div>
+    <div id="progress-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:16px 0 28px"></div>
+    <div class="page-title" style="font-size:16px">✅ Points forts</div>
+    <div id="progress-strengths" style="margin:10px 0 28px"></div>
+    <div class="page-title" style="font-size:16px">🎯 À travailler en priorité</div>
+    <div id="progress-weaknesses" style="margin:10px 0 28px"></div>
+    <button class="back-home-btn" onclick="resetProgressHistory()">Réinitialiser mon historique</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+// ===================== UTILS =====================
+function shuf(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function tts(txt,rate,cb){if(!window.speechSynthesis)return cb&&cb();speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt);u.lang="fr-FR";u.rate=rate||1;if(cb)u.onend=cb;speechSynthesis.speak(u);}
+function clearTimer(){if(window._exTimer){clearInterval(window._exTimer);window._exTimer=null;}}
+function el(id){return document.getElementById(id);}
+
+// nombre -> lettres françaises (et un, soixante-dix, quatre-vingts, cent/cents)
+function numToFr(n){
+  if(n===0)return "zéro";
+  const units=["","un","deux","trois","quatre","cinq","six","sept","huit","neuf","dix","onze","douze","treize","quatorze","quinze","seize","dix-sept","dix-huit","dix-neuf"];
+  const tens=["","dix","vingt","trente","quarante","cinquante","soixante","soixante","quatre-vingts","quatre-vingt"];
+  function b100(n){
+    if(n<20)return units[n];
+    const t=Math.floor(n/10),u=n%10;
+    if(t===7){if(u===1)return "soixante et onze";return "soixante-"+units[10+u];}
+    if(t===8){if(u===0)return "quatre-vingts";return "quatre-vingt-"+units[u];}
+    if(t===9)return "quatre-vingt-"+units[10+u];
+    if(u===0)return tens[t];
+    if(u===1)return tens[t]+" et un";
+    return tens[t]+"-"+units[u];
+  }
+  function b1000(n){
+    if(n<100)return b100(n);
+    const c=Math.floor(n/100),r=n%100;
+    let s=c===1?"cent":units[c]+" cent"+(r===0&&c>1?"s":"");
+    if(r===0)return s;
+    return s+" "+b100(r);
+  }
+  return b1000(n);
+}
+
+// ===================== GENERATEURS (aleatoires a chaque partie) =====================
+function randInt(min,max){return min+Math.floor(Math.random()*(max-min+1));}
+function pickN(arr,n){return shuf(arr).slice(0,n);}
+
+function genM1Num(){return Math.random()<0.5?randInt(10,99):randInt(100,999);}
+
+function genM2(){
+  const type=randInt(0,3);
+  let n,parts;
+  if(type===0){
+    const c=randInt(1,9),d=randInt(0,9),u=randInt(0,9);
+    n=c*100+d*10+u;parts=[{n:c,t:"C"},{n:d,t:"D"},{n:u,t:"U"}];
+  }else if(type===1){
+    const d=randInt(1,9),u=randInt(0,9);
+    n=d*10+u;parts=[{n:d,t:"D"},{n:u,t:"U"}];
+  }else if(type===2){
+    const d=randInt(2,90);
+    n=d*10;parts=[{n:d,t:"D"}];
+  }else{
+    const extraU=randInt(10,39);const d=randInt(0,9);
+    n=extraU+d*10;parts=[{n:extraU,t:"U"},{n:d,t:"D"}];
+    if(Math.random()<0.4){const c=randInt(1,5);n+=c*100;parts.push({n:c,t:"C"});}
+  }
+  return {parts:shuf(parts),n:n};
+}
+
+function genM3(){
+  const is3=Math.random()<0.5;
+  const lo=is3?100:10,hi=is3?999:99;
+  const spread=is3?randInt(5,40):randInt(2,12);
+  const base=randInt(lo+spread,hi-spread);
+  const set=new Set();let guard=0;
+  while(set.size<4&&guard<80){guard++;const v=base+randInt(-spread,spread);if(v>=lo&&v<=hi)set.add(v);}
+  while(set.size<4)set.add(randInt(lo,hi));
+  return [...set];
+}
+
+function genM4(){
+  const nTerms=Math.random()<0.7?2:3;
+  let terms,result;
+  do{
+    terms=[];
+    for(let i=0;i<nTerms;i++)terms.push(randInt(10,i===0?600:300));
+    result=terms.reduce(function(a,b){return a+b;},0);
+  }while(result>999);
+  return {terms:terms.map(String),result:result};
+}
+
+function genM5(){
+  const is3=Math.random()<0.6;
+  let a,b;
+  if(is3){a=randInt(100,999);b=randInt(10,a-1);}
+  else{a=randInt(10,99);b=randInt(1,a-1);}
+  return {a:String(a),b:String(b),result:a-b};
+}
+
+const M6_TEMPLATES=[
+  function(){const a=randInt(20,300),b=randInt(10,250);return{q:"Dans un poulailler, il y a "+a+" poules blanches et "+b+" poules rousses. Combien de poules y a-t-il en tout ?",r:a+b,u:"poules"};},
+  function(){const a=randInt(50,500),b=randInt(10,a-5);return{q:"Léo avait "+a+" images. Il en donne "+b+" à son ami. Combien d'images lui reste-t-il ?",r:a-b,u:"images"};},
+  function(){const a=randInt(2,9),b=randInt(3,12);return{q:"Un marchand range "+a+" paquets de "+b+" oranges. Combien d'oranges a-t-il en tout ?",r:a*b,u:"oranges"};},
+  function(){const a=randInt(30,200),b=randInt(5,80),c=randInt(5,60);return{q:"Dans un bus, il y a "+a+" passagers. À un arrêt, "+b+" descendent puis "+c+" montent. Combien de passagers y a-t-il maintenant ?",r:a-b+c,u:"passagers"};}
+];
+function genM6(){return M6_TEMPLATES[randInt(0,M6_TEMPLATES.length-1)]();}
+
+function genM9(){
+  const n=Math.random()<0.5?randInt(10,99):randInt(100,999);
+  const s=String(n);
+  const cands=new Set();
+  if(s.length>=2){const a=s.split("");const b=a.slice();var tmp=b[0];b[0]=b[1];b[1]=tmp;const v=parseInt(b.join(""),10);if(v!==n&&v>0)cands.add(v);}
+  if(s.length===3){const a=s.split("");const b=a.slice();var tmp2=b[1];b[1]=b[2];b[2]=tmp2;const v=parseInt(b.join(""),10);if(v!==n&&v>0)cands.add(v);}
+  [1,-1,10,-10].forEach(function(d){const v=n+d;if(v>0&&v!==n)cands.add(v);});
+  let guard=0;
+  while(cands.size<5&&guard<50){guard++;const v=n+randInt(-15,15);if(v>0&&v!==n)cands.add(v);}
+  const choices=shuf([n].concat([...cands].slice(0,5)));
+  return {n:n,c:choices};
+}
+
+const M10_CONFIGS=[[0,10,1],[0,20,2],[0,50,5],[0,100,10],[50,100,5],[100,200,10],[200,300,10],[0,1000,100]];
+function genM10(){
+  const cfg=M10_CONFIGS[randInt(0,M10_CONFIGS.length-1)];
+  const min=cfg[0],max=cfg[1],step=cfg[2];
+  const steps=(max-min)/step;
+  const k=randInt(1,steps-1);
+  return {min:min,max:max,step:step,val:min+k*step};
+}
+
+const F1_BANK=[
+  {m:"chemin",p:"Je marche sur le chemin."},{m:"feuille",p:"La feuille tombe de l'arbre."},
+  {m:"maison",p:"Nous rentrons à la maison."},{m:"jardin",p:"Les fleurs poussent dans le jardin."},
+  {m:"soleil",p:"Le soleil brille aujourd'hui."},{m:"tableau",p:"La maîtresse écrit au tableau."},
+  {m:"fenêtre",p:"Ouvre la fenêtre s'il te plaît."},{m:"chapeau",p:"Il porte un chapeau rouge."},
+  {m:"oiseau",p:"Un oiseau chante dans le jardin."},{m:"gâteau",p:"Maman prépare un gâteau au chocolat."},
+  {m:"bureau",p:"Le stylo est sur le bureau."},{m:"couteau",p:"Ne joue pas avec ce couteau."},
+  {m:"oreille",p:"Le lapin dresse une oreille."},{m:"famille",p:"Toute la famille mange ensemble."},
+  {m:"abeille",p:"L'abeille butine la fleur."},{m:"bouteille",p:"Il verse de l'eau dans la bouteille."},
+  {m:"sonnette",p:"Il appuie sur la sonnette."},{m:"fillette",p:"La fillette joue à la corde."},
+  {m:"trottoir",p:"Il marche sur le trottoir."},{m:"renard",p:"Le renard se cache dans le bois."},
+  {m:"bavard",p:"Mon petit frère est très bavard."},{m:"nid",p:"L'oiseau construit son nid."},
+  {m:"pied",p:"Elle s'est fait mal au pied."},{m:"mère",p:"Ma mère prépare le repas."},
+  {m:"verre",p:"Il boit un verre de lait."},{m:"campagne",p:"Nous passons l'été à la campagne."},
+  {m:"montagne",p:"Ils grimpent en haut de la montagne."},{m:"agneau",p:"Le petit agneau suit sa mère."},
+  {m:"automne",p:"Les feuilles tombent en automne."},{m:"orage",p:"Un orage éclate ce soir."},
+  {m:"plage",p:"Les enfants jouent sur la plage."},{m:"nuage",p:"Un gros nuage cache le soleil."},
+  {m:"voisin",p:"Mon voisin promène son chien."},{m:"coussin",p:"Elle pose sa tête sur le coussin."},
+  {m:"ruisseau",p:"Le ruisseau coule dans la forêt."},{m:"perroquet",p:"Le perroquet répète des mots."},
+  {m:"bouquet",p:"Elle offre un bouquet de fleurs."},{m:"écureuil",p:"L'écureuil grimpe dans l'arbre."}
+];
+
+const F2_BANK=[
+  {w:["Les","élèves","jouent","aux","billes","dans","la","cour."],s:[0,1]},
+  {w:["Mon","petit","frère","range","ses","jouets."],s:[0,1,2]},
+  {w:["La","maîtresse","écrit","au","tableau."],s:[0,1]},
+  {w:["Les","oiseaux","chantent","le","matin."],s:[0,1]},
+  {w:["Le","renard","court","dans","la","forêt."],s:[0,1]},
+  {w:["Trois","enfants","jouent","dans","la","cour."],s:[0,1]},
+  {w:["Le","jardinier","arrose","ses","plantes."],s:[0,1]},
+  {w:["Toute","la","classe","part","en","voyage."],s:[0,1,2]},
+  {w:["Les","nuages","cachent","le","soleil."],s:[0,1]},
+  {w:["Mon","chien","aboie","très","fort."],s:[0,1]},
+  {w:["Le","soleil","brille","dans","le","ciel."],s:[0,1]},
+  {w:["Ma","sœur","lit","un","livre."],s:[0,1]},
+  {w:["Les","vaches","broutent","dans","la","prairie."],s:[0,1]},
+  {w:["Nous","mangeons","des","pommes."],s:[0]},
+  {w:["Le","boulanger","prépare","le","pain."],s:[0,1]},
+  {w:["Les","abeilles","butinent","les","fleurs."],s:[0,1]},
+  {w:["Antoine","et","Léa","préparent","le","goûter."],s:[0,1,2]},
+  {w:["Ce","grand","bateau","traverse","l'océan."],s:[0,1,2]},
+  {w:["Le","vieux","chat","dort","près","du","feu."],s:[0,1,2]},
+  {w:["Vous","arrivez","toujours","en","retard."],s:[0]},
+  {w:["Les","enfants","du","village","préparent","la","fête."],s:[0,1,2,3]},
+  {w:["Le","garagiste","réparera","la","voiture."],s:[0,1]},
+  {w:["Fatoumata","dessine","souvent","des","fleurs."],s:[0]},
+  {w:["Je","ramasse","des","coquillages."],s:[0]},
+  {w:["Ce","vieux","fermier","récolte","le","blé."],s:[0,1,2]}
+];
+const F3_BANK=[
+  {w:["Le","chat","dort","sur","le","canapé."],v:[2]},
+  {w:["Nous","mangeons","des","pommes."],v:[1]},
+  {w:["Le","vent","souffle","très","fort."],v:[2]},
+  {w:["Vous","écrivez","une","lettre."],v:[1]},
+  {w:["Ma","sœur","lit","un","livre."],v:[2]},
+  {w:["Les","élèves","apprennent","leur","leçon."],v:[2]},
+  {w:["La","pluie","tombe","sur","le","toit."],v:[2]},
+  {w:["Ils","construisent","une","cabane."],v:[1]},
+  {w:["Les","enfants","dessinent","des","fleurs."],v:[2]},
+  {w:["Tu","lis","une","belle","histoire."],v:[1]},
+  {w:["Le","fermier","récolte","le","blé."],v:[2]},
+  {w:["Nous","partons","en","vacances."],v:[1]},
+  {w:["Elle","choisit","une","belle","robe."],v:[1]},
+  {w:["Les","élèves","écoutent","la","maîtresse."],v:[2]},
+  {w:["Le","boulanger","pétrit","la","pâte."],v:[2]},
+  {w:["Vous","chantez","juste."],v:[1]},
+  {w:["Le","bébé","dort","tranquillement."],v:[2]},
+  {w:["Les","abeilles","butinent","les","fleurs."],v:[2]},
+  {w:["Je","ramasse","des","coquillages."],v:[1]},
+  {w:["Les","chevaux","galopent","dans","le","pré."],v:[2]},
+  {w:["Le","garagiste","répare","la","voiture."],v:[2]},
+  {w:["La","maîtresse","écrit","au","tableau."],v:[2]},
+  {w:["Les","oiseaux","chantent","le","matin."],v:[2]},
+  {w:["Mon","chien","aboie","très","fort."],v:[2]}
+];
+
+const F4_BANK=[
+  {s:"Je déteste le <u>football</u>.",c:"nom commun"},
+  {s:"<u>Jim</u> pose sa serviette.",c:"nom propre"},
+  {s:"Il porte une veste <u>bleue</u>.",c:"adjectif"},
+  {s:"Elle achète <u>un</u> gâteau.",c:"déterminant"},
+  {s:"C'est un <u>beau</u> dessin.",c:"adjectif"},
+  {s:"<u>Les</u> enfants jouent.",c:"déterminant"},
+  {s:"<u>Antoine</u> aime le sport.",c:"nom propre"},
+  {s:"C'est une <u>grande</u> maison.",c:"adjectif"},
+  {s:"Le <u>chat</u> dort sur le tapis.",c:"nom commun"},
+  {s:"<u>Ma</u> sœur arrive demain.",c:"déterminant"},
+  {s:"Nous visitons <u>Paris</u>.",c:"nom propre"},
+  {s:"Elle porte des chaussures <u>noires</u>.",c:"adjectif"},
+  {s:"<u>Léa</u> range sa chambre.",c:"nom propre"},
+  {s:"Il boit <u>du</u> lait.",c:"déterminant"},
+  {s:"C'est un <u>chien</u> obéissant.",c:"nom commun"},
+  {s:"Elle a un cartable <u>rouge</u>.",c:"adjectif"},
+  {s:"<u>Ce</u> livre est passionnant.",c:"déterminant"},
+  {s:"Nous habitons en <u>France</u>.",c:"nom propre"},
+  {s:"Le <u>jardin</u> est fleuri.",c:"nom commun"},
+  {s:"C'est une histoire <u>drôle</u>.",c:"adjectif"},
+  {s:"<u>Notre</u> maison est grande.",c:"déterminant"},
+  {s:"<u>Zoé</u> adore lire.",c:"nom propre"},
+  {s:"Le <u>gâteau</u> sent bon.",c:"nom commun"},
+  {s:"Il a un vélo <u>neuf</u>.",c:"adjectif"},
+  {s:"<u>Malik</u> joue au ballon.",c:"nom propre"}
+];
+
+const F5_ADJ=[
+  {base:"petit",ms:"petit",mp:"petits",fs:"petite",fp:"petites"},
+  {base:"grand",ms:"grand",mp:"grands",fs:"grande",fp:"grandes"},
+  {base:"joli",ms:"joli",mp:"jolis",fs:"jolie",fp:"jolies"},
+  {base:"noir",ms:"noir",mp:"noirs",fs:"noire",fp:"noires"},
+  {base:"vert",ms:"vert",mp:"verts",fs:"verte",fp:"vertes"},
+  {base:"absent",ms:"absent",mp:"absents",fs:"absente",fp:"absentes"},
+  {base:"droit",ms:"droit",mp:"droits",fs:"droite",fp:"droites"},
+  {base:"cruel",ms:"cruel",mp:"cruels",fs:"cruelle",fp:"cruelles"},
+  {base:"méchant",ms:"méchant",mp:"méchants",fs:"méchante",fp:"méchantes"},
+  {base:"gentil",ms:"gentil",mp:"gentils",fs:"gentille",fp:"gentilles"},
+  {base:"heureux",ms:"heureux",mp:"heureux",fs:"heureuse",fp:"heureuses"},
+  {base:"courageux",ms:"courageux",mp:"courageux",fs:"courageuse",fp:"courageuses"},
+  {base:"fermé",ms:"fermé",mp:"fermés",fs:"fermée",fp:"fermées"},
+  {base:"ouvert",ms:"ouvert",mp:"ouverts",fs:"ouverte",fp:"ouvertes"},
+  {base:"rouge",ms:"rouge",mp:"rouges",fs:"rouge",fp:"rouges"}
+];
+const F5_NOUNS=[
+  {mot:"chien",det:"un",genre:"m",nombre:"s"},{mot:"chiens",det:"des",genre:"m",nombre:"p"},
+  {mot:"chatte",det:"une",genre:"f",nombre:"s"},{mot:"chattes",det:"des",genre:"f",nombre:"p"},
+  {mot:"garçon",det:"un",genre:"m",nombre:"s"},{mot:"garçons",det:"des",genre:"m",nombre:"p"},
+  {mot:"fille",det:"une",genre:"f",nombre:"s"},{mot:"filles",det:"des",genre:"f",nombre:"p"},
+  {mot:"arbre",det:"un",genre:"m",nombre:"s"},{mot:"arbres",det:"des",genre:"m",nombre:"p"},
+  {mot:"fleur",det:"une",genre:"f",nombre:"s"},{mot:"fleurs",det:"des",genre:"f",nombre:"p"},
+  {mot:"livre",det:"un",genre:"m",nombre:"s"},{mot:"livres",det:"des",genre:"m",nombre:"p"},
+  {mot:"maison",det:"une",genre:"f",nombre:"s"},{mot:"maisons",det:"des",genre:"f",nombre:"p"},
+  {mot:"chapeau",det:"un",genre:"m",nombre:"s"},{mot:"chapeaux",det:"des",genre:"m",nombre:"p"},
+  {mot:"robe",det:"une",genre:"f",nombre:"s"},{mot:"robes",det:"des",genre:"f",nombre:"p"},
+  {mot:"chemin",det:"le",genre:"m",nombre:"s"},{mot:"chemins",det:"les",genre:"m",nombre:"p"},
+  {mot:"porte",det:"la",genre:"f",nombre:"s"},{mot:"portes",det:"les",genre:"f",nombre:"p"}
+];
+function genF5(){
+  const noun=F5_NOUNS[randInt(0,F5_NOUNS.length-1)];
+  const adj=F5_ADJ[randInt(0,F5_ADJ.length-1)];
+  const key=noun.genre+noun.nombre;
+  const exp=adj[key];
+  return {ph:noun.det+" "+noun.mot+" … ("+adj.base+")",rad:adj.base,exp:exp};
+}
+
+const F6_BANK=[
+  {s:"Le chien <strong>mange</strong> sa pâtée.",t:"présent"},
+  {s:"Les chevaux <strong>galopaient</strong> dans le pré.",t:"imparfait"},
+  {s:"Les élèves <strong>porteront</strong> un masque.",t:"futur"},
+  {s:"J'<strong>ai vu</strong> un renard hier.",t:"passé composé"},
+  {s:"Nous <strong>étions</strong> en retard.",t:"imparfait"},
+  {s:"Vous <strong>aurez</strong> bientôt terminé.",t:"futur"},
+  {s:"J'<strong>ai</strong> un nouveau cahier.",t:"présent"},
+  {s:"Le bébé <strong>dormait</strong> tranquillement.",t:"imparfait"},
+  {s:"Tu <strong>rangeras</strong> ta chambre.",t:"futur"},
+  {s:"Elle <strong>dessine</strong> une fleur.",t:"présent"},
+  {s:"Vous <strong>avez mangé</strong> tout le gâteau.",t:"passé composé"},
+  {s:"Nous <strong>jouions</strong> dans le parc.",t:"imparfait"},
+  {s:"Ils <strong>partiront</strong> demain matin.",t:"futur"},
+  {s:"Elle <strong>a fini</strong> ses devoirs.",t:"passé composé"},
+  {s:"Le vent <strong>souffle</strong> très fort.",t:"présent"},
+  {s:"Les feuilles <strong>tombaient</strong> doucement.",t:"imparfait"},
+  {s:"Nous <strong>irons</strong> à la piscine.",t:"futur"},
+  {s:"Il <strong>a perdu</strong> ses clés.",t:"passé composé"},
+  {s:"La neige <strong>recouvre</strong> les toits.",t:"présent"},
+  {s:"Vous <strong>habitiez</strong> à la campagne.",t:"imparfait"}
+];
+
+const F7_EP_BANK=[
+  {vb:"chanter",tn:"présent",bef:"Tu ",aft:" une chanson.",exp:"chantes"},
+  {vb:"être",tn:"présent",bef:"Nous ",aft:" contents.",exp:"sommes"},
+  {vb:"parler",tn:"imparfait",bef:"Elle ",aft:" doucement.",exp:"parlait"},
+  {vb:"avoir",tn:"imparfait",bef:"Ils ",aft:" faim.",exp:"avaient"},
+  {vb:"chanter",tn:"futur",bef:"Tu ",aft:" une belle chanson.",exp:"chanteras"},
+  {vb:"être",tn:"futur",bef:"Vous ",aft:" en avance.",exp:"serez"},
+  {vb:"marcher",tn:"présent",bef:"Je ",aft:" sur le chemin.",exp:"marche"},
+  {vb:"avoir",tn:"futur",bef:"Nous ",aft:" un beau cadeau.",exp:"aurons"},
+  {vb:"jouer",tn:"imparfait",bef:"Nous ",aft:" dans le parc.",exp:"jouions"},
+  {vb:"être",tn:"présent",bef:"Elle ",aft:" contente.",exp:"est"},
+  {vb:"ranger",tn:"futur",bef:"Tu ",aft:" ta chambre.",exp:"rangeras"},
+  {vb:"manger",tn:"présent",bef:"Nous ",aft:" des fruits.",exp:"mangeons"},
+  {vb:"avoir",tn:"présent",bef:"Les loups ",aft:" des dents pointues.",exp:"ont"},
+  {vb:"avoir",tn:"futur",bef:"Ma sœur ",aft:" un beau cadeau.",exp:"aura"},
+  {vb:"être",tn:"imparfait",bef:"Ils ",aft:" rapides.",exp:"étaient"},
+  {vb:"couper",tn:"présent",bef:"Les bûcherons ",aft:" les arbres.",exp:"coupent"},
+  {vb:"préparer",tn:"imparfait",bef:"Vous ",aft:" une tarte.",exp:"prépariez"},
+  {vb:"coller",tn:"futur",bef:"Tu ",aft:" la feuille.",exp:"colleras"},
+  {vb:"parler",tn:"présent",bef:"Léa ",aft:" à la maîtresse.",exp:"parle"},
+  {vb:"être",tn:"futur",bef:"Il ",aft:" en retard.",exp:"sera"}
+];
+
+const F8_TEXTS=[
+  "Ce matin, Lila part à la mer avec ses parents. Dans la voiture, elle regarde les champs qui défilent derrière la vitre. Elle voit des vaches, un tracteur rouge et un grand moulin. Quand la voiture arrive au bord de la plage, Lila saute de joie. Elle enlève ses sandales et court sur le sable chaud. Les vagues avancent puis reculent en laissant de jolis coquillages. Lila en ramasse trois pour sa collection. Son père installe le parasol pendant que sa mère prépare le goûter. Après le pique-nique, toute la famille construit un immense château de sable avec quatre tours et un pont-levis. Le soir, fatiguée mais heureuse, Lila s'endort dans la voiture en rêvant déjà aux prochaines vacances au bord de la mer.",
+  "Dans le grenier de sa grand-mère, Tom découvre une vieille malle en bois. Il souffle sur la poussière et soulève le couvercle qui grince. À l'intérieur, il trouve un manteau rouge, des photos anciennes et une petite boîte dorée. Dans la boîte dort une clé mystérieuse. Tom descend l'escalier quatre à quatre pour montrer son trésor. Sa grand-mère sourit et raconte que cette clé ouvrait la maison de son enfance, une ferme entourée de pommiers. Elle décrit la cour, le puits et le chien qui gardait les poules. Tom écoute, les yeux grands ouverts. Le soir, il range la clé sous son oreiller. Il espère rêver de la ferme, des pommiers en fleurs et de toutes les histoires que sa grand-mère garde encore secrètes.",
+  "Samedi, le village organise sa grande fête de printemps. Dès le matin, les habitants installent des stands colorés sur la place. Le boulanger propose des brioches dorées, la fleuriste vend des bouquets de tulipes et le fermier apporte du fromage de chèvre. Nora et son cousin Malik font le tour des jeux. Ils pêchent des canards en plastique, lancent des anneaux et gagnent un poisson rouge. À midi, une fanfare traverse la foule avec ses trompettes et son gros tambour. Tout le monde tape des mains en rythme. L'après-midi, un magicien fait disparaître un lapin blanc sous son grand chapeau, puis le fait réapparaître dans la poche d'un spectateur étonné. Le soir venu, des lampions s'allument et la fête se termine par un joli feu d'artifice.",
+  "Ce soir, une tempête de neige recouvre doucement la ville. Depuis sa fenêtre, Adam observe les flocons qui dansent sous les lampadaires. Les toits deviennent blancs, les voitures ressemblent à de gros gâteaux à la crème. Le lendemain matin, l'école est fermée. Adam enfile son bonnet, ses gants et ses bottes fourrées. Dehors, ses amis l'attendent déjà. Ensemble, ils roulent trois énormes boules pour fabriquer un bonhomme de neige. Ils lui plantent une carotte en guise de nez et deux cailloux pour les yeux. Ensuite, la bataille de boules de neige commence entre les rires et les cris. À midi, les enfants rentrent se réchauffer autour d'un chocolat chaud. Adam colle son nez à la vitre et espère que la neige tiendra encore toute la semaine.",
+  "Au fond du jardin de l'école, les élèves ont planté un petit potager. Chaque semaine, une équipe différente s'en occupe avec soin. Cette semaine, c'est le tour de Chloé et de ses camarades. Ils arrosent les tomates, arrachent les mauvaises herbes et vérifient les salades. Sous une grande feuille, Chloé découvre une famille d'escargots bien cachée. Elle appelle ses amis pour les observer sans les déranger. Le maître explique que les escargots sortent surtout après la pluie. Plus loin, des radis pointent enfin leur nez rose hors de la terre. Les enfants les cueillent et les rangent fièrement dans un panier. Demain, ils les partageront à la cantine avec toute l'école. Chloé sourit : grâce au potager, la classe apprend la patience et le plaisir de récolter ce que l'on sème."
+];
+
+function generateEpreuveData(){
+  return {
+    m1:Array.from({length:4},genM1Num),
+    m2:Array.from({length:2},genM2),
+    m3:genM3(),
+    m4:Array.from({length:2},genM4),
+    m5:Array.from({length:2},genM5),
+    m6:Array.from({length:2},genM6),
+    m9:Array.from({length:3},genM9),
+    m10:Array.from({length:2},genM10),
+    f1:pickN(F1_BANK,3),
+    f2:pickN(F2_BANK,2),
+    f3:pickN(F3_BANK,2),
+    f4:pickN(F4_BANK,2),
+    f5:Array.from({length:2},genF5),
+    f6:pickN(F6_BANK,2),
+    f7:pickN(F7_EP_BANK,2),
+    f8:F8_TEXTS[randInt(0,F8_TEXTS.length-1)]
+  };
+}
+
+// ===================== ETAT =====================
+const EP_SCORES={};
+let G_EP_IDX=0,G_EX_IDX=0,G_EX_SCORES=[],G_EXERCISES=[],G_DONE_CALLED=false;
+
+// ===================== PROGRESSION (localStorage) =====================
+const PROGRESS_KEY="spaceLearningProgress_CE2";
+function saveAttempt(domaine,bon,total,source){
+  try{
+    let data;
+    try{data=JSON.parse(localStorage.getItem(PROGRESS_KEY))||{attempts:[]};}
+    catch(e){data={attempts:[]};}
+    if(!Array.isArray(data.attempts))data.attempts=[];
+    data.attempts.push({ts:Date.now(),domaine:domaine,bon:bon,total:total,source:source});
+    localStorage.setItem(PROGRESS_KEY,JSON.stringify(data));
+  }catch(e){/* localStorage indisponible : on ignore silencieusement */}
+}
+function loadProgressData(){
+  try{
+    const data=JSON.parse(localStorage.getItem(PROGRESS_KEY))||{attempts:[]};
+    if(!Array.isArray(data.attempts))data.attempts=[];
+    return data;
+  }catch(e){return{attempts:[]};}
+}
+const PROGRESS_DOMAINS=[
+  {id:"M1",name:"Écriture des nombres",color:"var(--bleu)"},
+  {id:"M2",name:"Décomposition additive",color:"var(--bleu)"},
+  {id:"M3",name:"Ordre croissant",color:"var(--bleu)"},
+  {id:"M4",name:"Additions posées",color:"var(--bleu)"},
+  {id:"M5",name:"Soustractions posées",color:"var(--bleu)"},
+  {id:"M6",name:"Problèmes",color:"var(--bleu)"},
+  {id:"M7",name:"Tables d'addition",color:"var(--bleu)"},
+  {id:"M8",name:"Calcul rapide",color:"var(--bleu)"},
+  {id:"M9",name:"Lecture des nombres",color:"var(--bleu)"},
+  {id:"M10",name:"Droite graduée",color:"var(--bleu)"},
+  {id:"F1",name:"Dictée",color:"var(--rouge)"},
+  {id:"F2",name:"Le sujet",color:"var(--rouge)"},
+  {id:"F3",name:"Le verbe",color:"var(--rouge)"},
+  {id:"F4",name:"Classes de mots",color:"var(--rouge)"},
+  {id:"F5",name:"Accord de l'adjectif",color:"var(--rouge)"},
+  {id:"F6",name:"Temps du verbe",color:"var(--rouge)"},
+  {id:"F7",name:"Conjugaison",color:"var(--rouge)"},
+  {id:"F8",name:"Fluence",color:"var(--rouge)"}
+];
+function domainStats(id){
+  const data=loadProgressData();
+  const list=data.attempts.filter(function(a){return a.domaine===id;}).sort(function(a,b){return a.ts-b.ts;});
+  if(list.length===0)return{count:0,pct:0,trend:"none"};
+  let sb=0,st=0;
+  list.forEach(function(a){sb+=a.bon;st+=a.total;});
+  const pct=st>0?Math.round(sb/st*100):0;
+  let trend="none";
+  if(list.length>=2){
+    const recent=list.slice(-3);
+    const prev=list.slice(-6,-3);
+    if(recent.length>=1&&prev.length>=1){
+      function avg(arr){let b=0,t=0;arr.forEach(function(a){b+=a.bon;t+=a.total;});return t>0?(b/t*100):0;}
+      const rAvg=avg(recent),pAvg=avg(prev);
+      if(rAvg-pAvg>3)trend="up";
+      else if(pAvg-rAvg>3)trend="down";
+      else trend="stable";
+    }
+  }
+  return{count:list.length,pct:pct,trend:trend};
+}
+function trendArrow(trend){
+  if(trend==="up")return "<span style=\"color:var(--vert)\">↗</span>";
+  if(trend==="down")return "<span style=\"color:var(--rouge)\">↘</span>";
+  if(trend==="stable")return "<span style=\"color:var(--text-muted)\">→</span>";
+  return "<span style=\"color:var(--border-strong)\">—</span>";
+}
+function badgeColor(count,pct){
+  if(count===0)return "var(--border-strong)";
+  if(pct>=80)return "var(--vert)";
+  if(pct>=50)return "var(--jaune)";
+  return "var(--rouge)";
+}
+function showProgressScreen(){
+  clearTimer();speechSynthesis.cancel();
+  el("home-screen").style.display="none";
+  el("sommaire-screen").style.display="none";
+  el("ep-screen").style.display="none";
+  el("score-screen").style.display="none";
+  el("progress-screen").style.display="block";
+  renderProgressScreen();
+}
+function renderProgressScreen(){
+  const grid=el("progress-grid");
+  grid.innerHTML=PROGRESS_DOMAINS.map(function(d){
+    const s=domainStats(d.id);
+    const bg=badgeColor(s.count,s.pct);
+    return "<div class=\"ep-card\" style=\"cursor:default\">"+
+      "<div class=\"ep-card-num\" style=\"color:"+d.color+"\">"+d.id+"</div>"+
+      "<div class=\"ep-card-name\">"+d.name+"</div>"+
+      "<div style=\"display:flex;align-items:center;gap:8px;margin-top:4px\">"+
+      "<span class=\"ep-card-score\" style=\"background:"+bg+";color:#fff\">"+(s.count>0?s.pct+"%":"—")+"</span>"+
+      "<span style=\"font-size:12px;color:var(--text-muted)\">"+s.count+" tentative"+(s.count>1?"s":"")+"</span>"+
+      trendArrow(s.trend)+
+      "</div></div>";
+  }).join("");
+
+  const withStats=PROGRESS_DOMAINS.map(function(d){const s=domainStats(d.id);return{id:d.id,name:d.name,color:d.color,count:s.count,pct:s.pct};});
+  const strong=withStats.filter(function(d){return d.count>=2&&d.pct>=80;}).sort(function(a,b){return b.pct-a.pct;});
+  const weak=withStats.filter(function(d){return d.count>=1&&d.pct<50;}).sort(function(a,b){return (b.count-a.count)||(a.pct-b.pct);});
+
+  const strEl=el("progress-strengths");
+  if(strong.length===0){
+    strEl.innerHTML="<p style=\"color:var(--text-muted);font-size:14px\">Pas encore de points forts identifies - continue a t'entrainer !</p>";
+  }else{
+    strEl.innerHTML="<div class=\"ep-grid\">"+strong.map(function(d){
+      return "<div class=\"ep-card\"><div class=\"ep-card-num\" style=\"color:"+d.color+"\">"+d.id+"</div><div class=\"ep-card-name\">"+d.name+"</div><span class=\"ep-card-score done\">"+d.pct+"%</span></div>";
+    }).join("")+"</div>";
+  }
+  const weakEl=el("progress-weaknesses");
+  if(weak.length===0){
+    weakEl.innerHTML="<p style=\"color:var(--text-muted);font-size:14px\">Rien a signaler pour l'instant, bravo !</p>";
+  }else{
+    weakEl.innerHTML="<div class=\"ep-grid\">"+weak.map(function(d){
+      return "<div class=\"ep-card\"><div class=\"ep-card-num\" style=\"color:"+d.color+"\">"+d.id+"</div><div class=\"ep-card-name\">"+d.name+"</div><span class=\"ep-card-score\" style=\"background:var(--rouge);color:#fff\">"+d.pct+"%</span></div>";
+    }).join("")+"</div>";
+  }
+}
+function resetProgressHistory(){
+  const ok=confirm("Es-tu sur de vouloir effacer tout ton historique de progression ? Cette action est irreversible.");
+  if(!ok)return;
+  try{localStorage.setItem(PROGRESS_KEY,JSON.stringify({attempts:[]}));}catch(e){}
+  renderProgressScreen();
+}
+
+// ===================== NAVIGATION =====================
+function goHome(){
+  clearTimer();speechSynthesis.cancel();
+  el("home-screen").style.display="";
+  el("sommaire-screen").style.display="none";
+  el("ep-screen").style.display="none";
+  el("score-screen").style.display="none";
+  el("progress-screen").style.display="none";
+  renderHome();
+}
+function startEpreuve(idx){
+  clearTimer();speechSynthesis.cancel();
+  G_EP_IDX=idx;G_EX_IDX=0;G_EX_SCORES=[];
+  G_EXERCISES=buildExercises(idx);
+  el("home-screen").style.display="none";
+  el("score-screen").style.display="none";
+  el("ep-screen").style.display="none";
+  // Sommaire : liste des 18 exercices M1 -> F8
+  el("sommaire-screen").style.display="block";
+  el("som-title").textContent="Épreuve "+(idx+1);
+  el("som-list").innerHTML=G_EXERCISES.map(function(ex,k){
+    const fr=ex.label.indexOf("F")===0;
+    return "<div class=\"som-item\" data-k=\""+k+"\" style=\"display:flex;align-items:center;gap:10px;padding:9px 12px;margin-bottom:5px;background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer\">"+
+      "<span style=\"width:8px;height:8px;border-radius:50%;background:"+(fr?"var(--rouge)":"var(--bleu)")+";flex-shrink:0\"></span>"+
+      "<span style=\"font-size:14px\">"+(k+1)+". "+ex.label+"</span></div>";
+  }).join("");
+  el("som-list").querySelectorAll(".som-item").forEach(function(item){
+    item.addEventListener("click",function(){lancerExercices(parseInt(item.dataset.k));});
+  });
+  el("som-start").onclick=function(){lancerExercices(0);};
+  el("som-back").onclick=goHome;
+}
+function lancerExercices(fromIdx){
+  G_EX_IDX=fromIdx;G_EX_SCORES=[];
+  el("sommaire-screen").style.display="none";
+  el("ep-screen").style.display="block";
+  el("ep-title").textContent="Épreuve "+(G_EP_IDX+1);
+  renderExercice();
+}
+function renderExercice(){
+  clearTimer();speechSynthesis.cancel();
+  const total=G_EXERCISES.length;
+  el("ep-num").textContent="Exercice "+(G_EX_IDX+1)+" / "+total;
+  el("ep-prog-fill").style.width=Math.round(G_EX_IDX/total*100)+"%";
+  const body=el("ep-body");
+  body.innerHTML="";
+  const ex=G_EXERCISES[G_EX_IDX];
+  G_DONE_CALLED=false;
+  ex.run(body,function(bon,tot){
+    if(G_DONE_CALLED)return; // protection double appel
+    G_DONE_CALLED=true;
+    G_EX_SCORES.push({label:ex.label,bon:bon,total:tot});
+    const domMatch=/^([MF]\d+)/.exec(ex.label);
+    if(domMatch)saveAttempt(domMatch[1],bon,tot,"epreuve"+(G_EP_IDX+1));
+    G_EX_IDX++;
+    if(G_EX_IDX>=G_EXERCISES.length)showFinalScore();
+    else renderExercice();
+  });
+}
+function showFinalScore(){
+  clearTimer();speechSynthesis.cancel();
+  let tb=0,tq=0;
+  G_EX_SCORES.forEach(function(s){tb+=s.bon;tq+=s.total;});
+  EP_SCORES[G_EP_IDX]={bon:tb,total:tq};
+  el("ep-screen").style.display="none";
+  el("score-screen").style.display="block";
+  el("fn-title").textContent="Épreuve "+(G_EP_IDX+1)+" — Résultats";
+  el("fn-big").textContent=tb;
+  el("fn-label").textContent="points sur "+tq;
+  const pct=tq>0?Math.round(tb/tq*100):0;
+  el("fn-bar").style.width=pct+"%";
+  el("fn-list").innerHTML=G_EX_SCORES.map(function(s,i){
+    const cls=s.bon>=s.total?"all-good":(s.bon>=s.total/2?"partial":"bad");
+    return "<li><span class=\"li-label\">"+(i+1)+". "+s.label+"</span><span class=\"li-score "+cls+"\">"+s.bon+" / "+s.total+"</span></li>";
+  }).join("");
+  let msg="Continue les efforts, tu vas y arriver !";
+  if(pct>=90)msg="Excellent travail ! Tu es prêt(e) pour la vraie épreuve !";
+  else if(pct>=75)msg="Très bien ! Encore un petit peu de révision.";
+  else if(pct>=50)msg="Bien ! Continue à t’entraîner régulièrement.";
+  el("fn-msg").textContent=msg;
+}
+
+// ===================== ACCUEIL =====================
+function renderHome(){
+  el("ep-grid").innerHTML=EPREUVES.map(function(ep,i){
+    const s=EP_SCORES[i];
+    const badge=s?"<span class=\"ep-card-score done\">"+s.bon+" / "+s.total+" ✓</span>":"<span class=\"ep-card-score\">à faire</span>";
+    return "<div class=\"ep-card\" data-ep=\""+i+"\"><div class=\"ep-card-num\">ÉPREUVE "+(i+1)+"</div><div class=\"ep-card-name\">"+ep.name+"</div><div class=\"ep-card-desc\">18 exercices · "+ep.desc+"</div>"+badge+"</div>";
+  }).join("");
+  el("ep-grid").querySelectorAll(".ep-card").forEach(function(c){
+    c.addEventListener("click",function(){startEpreuve(parseInt(c.dataset.ep));});
+  });
+}
+
+// ===================== HELPERS UI =====================
+function fbNextHTML(){
+  return "<div class=\"input-feedback\" id=\"fb\"></div><br><button class=\"next-btn\" id=\"nx\">Suivant →</button>";
+}
+// Feedback + bouton Suivant = SEUL chemin d'avancement (pas d'auto-avance)
+function showResult(ok,koMsg,onNext){
+  const fb=el("fb");
+  fb.textContent=ok?"✓ Bravo !":"✗ "+koMsg;
+  fb.className="input-feedback "+(ok?"ok":"ko");
+  const nx=el("nx");
+  nx.style.display="inline-block";
+  nx.onclick=onNext;
+  nx.focus();
+}
+function bindEnter(inputId,fn){
+  const e=el(inputId);
+  if(e)e.addEventListener("keydown",function(ev){if(ev.key==="Enter")fn();});
+}
+
+// ===================== MOTEURS (18 types) =====================
+
+// --- M1 Dictée de nombres (TTS -> saisie) ---
+function exM1(nums){
+  return {label:"M1 · Écriture des nombres",run:function(body,done){
+    let idx=0,bon=0;
+    function play(){const n=nums[idx];tts(numToFr(n),0.85,function(){setTimeout(function(){tts(numToFr(n),0.85);},500);});}
+    function step(){
+      if(idx>=nums.length){done(bon,nums.length);return;}
+      const hint=nums[idx]<100?"nombre à 2 chiffres":"nombre à 3 chiffres";
+      body.innerHTML="<div class=\"ex-label math\">Dictée de nombres — "+(idx+1)+"/"+nums.length+"</div>"+
+        "<p class=\"ex-question\">Écris en chiffres le nombre que tu entends.</p>"+
+        "<p class=\"dictee-hint\">Indice : "+hint+"</p>"+
+        "<button class=\"play-btn\" id=\"pl\">▶ Écouter</button><br>"+
+        "<input class=\"text-input\" type=\"number\" id=\"inp\" style=\"max-width:180px\" placeholder=\"Tape le nombre…\">"+
+        fbNextHTML();
+      el("pl").addEventListener("click",play);
+      bindEnter("inp",val);
+      setTimeout(play,400);
+    }
+    function val(){
+      const inp=el("inp");
+      if(inp.disabled)return;
+      const v=parseInt(inp.value);
+      if(isNaN(v))return;
+      inp.disabled=true;el("pl").disabled=true;
+      const ok=v===nums[idx];
+      if(ok)bon++;
+      showResult(ok,"La réponse était "+nums[idx],function(){idx++;step();});
+    }
+    step();
+  }};
+}
+
+// --- M2 Décomposition (saisie) ---
+function exM2(items){
+  return {label:"M2 · Décomposition additive",run:function(body,done){
+    let idx=0,bon=0;
+    function step(){
+      if(idx>=items.length){done(bon,items.length);return;}
+      const it=items[idx];
+      const parts=it.parts.map(function(p){
+        const cls=p.t==="C"?"decomp-c":(p.t==="D"?"decomp-d":"decomp-u");
+        return "<span class=\""+cls+"\">"+p.n+" "+p.t+"</span>";
+      }).join(" + ");
+      body.innerHTML="<div class=\"ex-label math\">Décomposition — "+(idx+1)+"/"+items.length+"</div>"+
+        "<p class=\"ex-question\">"+parts+" = ?</p>"+
+        "<p class=\"dictee-hint\"><span class=\"decomp-c\">C</span> = centaine · <span class=\"decomp-d\">D</span> = dizaine · <span class=\"decomp-u\">U</span> = unité</p>"+
+        "<input class=\"text-input\" type=\"number\" id=\"inp\" style=\"max-width:180px\" placeholder=\"Tape le nombre…\">"+
+        fbNextHTML();
+      bindEnter("inp",val);el("inp").focus();
+    }
+    function val(){
+      const inp=el("inp");
+      if(inp.disabled)return;
+      const v=parseInt(inp.value);
+      if(isNaN(v))return;
+      inp.disabled=true;
+      const ok=v===items[idx].n;
+      if(ok)bon++;
+      showResult(ok,"La réponse était "+items[idx].n,function(){idx++;step();});
+    }
+    step();
+  }};
+}
+
+// --- M3 Ordre croissant (jetons -> slots) ---
+function exM3(nums4){
+  return {label:"M3 · Ordre croissant",run:function(body,done){
+    const tokens=shuf([...nums4]);
+    let slotArr=[null,null,null,null];
+    body.innerHTML="<div class=\"ex-label math\">Ordre croissant</div>"+
+      "<p class=\"ex-question\">Range ces nombres du plus petit au plus grand :</p>"+
+      "<div class=\"slots-row\">"+[0,1,2,3].map(function(i){return "<div class=\"slot\" data-slot=\""+i+"\"></div>";}).join("")+"</div>"+
+      "<div class=\"tokens-row\">"+tokens.map(function(t,i){return "<button class=\"token\" data-val=\""+t+"\">"+t+"</button>";}).join("")+"</div>"+
+      "<button class=\"clear-btn\" id=\"clr\">Effacer</button>"+
+      "<button class=\"val-ord-btn\" id=\"vo\">Valider ✓</button>"+
+      fbNextHTML();
+    const slots=body.querySelectorAll(".slot");
+    const toks=body.querySelectorAll(".token");
+    toks.forEach(function(t){
+      t.addEventListener("click",function(){
+        if(t.disabled)return;
+        const ns=slotArr.indexOf(null);
+        if(ns===-1)return;
+        const v=parseInt(t.dataset.val);
+        slotArr[ns]=v;
+        slots[ns].textContent=v;slots[ns].classList.add("filled");
+        t.disabled=true;t.classList.add("used");
+        if(slotArr.indexOf(null)===-1)el("vo").style.display="inline-block";
+      });
+    });
+    slots.forEach(function(s,si){
+      s.addEventListener("click",function(){
+        if(slotArr[si]===null||el("vo").disabled)return;
+        const v=slotArr[si];
+        for(const t of toks){if(parseInt(t.dataset.val)===v&&t.disabled){t.disabled=false;t.classList.remove("used");break;}}
+        slotArr[si]=null;s.textContent="";s.classList.remove("filled");
+        el("vo").style.display="none";
+      });
+    });
+    el("clr").addEventListener("click",function(){
+      if(el("vo").disabled)return;
+      slotArr=[null,null,null,null];
+      slots.forEach(function(s){s.textContent="";s.classList.remove("filled");});
+      toks.forEach(function(t){t.disabled=false;t.classList.remove("used");});
+      el("vo").style.display="none";el("fb").textContent="";
+    });
+    el("vo").addEventListener("click",function(){
+      if(el("vo").disabled)return;
+      el("vo").disabled=true;el("clr").disabled=true;
+      toks.forEach(function(t){t.disabled=true;});
+      const sorted=[...nums4].sort(function(a,b){return a-b;});
+      const ok=JSON.stringify(slotArr)===JSON.stringify(sorted);
+      showResult(ok,"L’ordre correct était : "+sorted.join(" < "),function(){done(ok?1:0,1);});
+    });
+  }};
+}
+
+// --- M4 Additions posées ---
+function exM4(items){
+  return {label:"M4 · Additions posées",run:function(body,done){
+    let idx=0,bon=0;
+    function step(){
+      if(idx>=items.length){done(bon,items.length);return;}
+      const it=items[idx];
+      const maxLen=Math.max.apply(null,it.terms.map(function(t){return t.length;}).concat([3]));
+      const lines=it.terms.map(function(t,i){
+        const pre=i===it.terms.length-1?"+ ":"  ";
+        return "<span class=\"op-line\">"+pre+t.padStart(maxLen," ")+"</span>";
+      }).join("");
+      body.innerHTML="<div class=\"ex-label math\">Addition posée — "+(idx+1)+"/"+items.length+"</div>"+
+        "<p class=\"ex-question\">Effectue l’addition :</p>"+
+        "<div><div class=\"op-wrap\">"+lines+"<hr class=\"op-sep\">"+
+        "<input class=\"text-input\" type=\"number\" id=\"inp\" style=\"max-width:"+(maxLen+2)+"ch;text-align:right;margin-top:6px;padding:4px 8px;font-size:22px;font-family:monospace\"></div></div>"+
+        fbNextHTML();
+      bindEnter("inp",val);el("inp").focus();
+    }
+    function val(){
+      const inp=el("inp");
+      if(inp.disabled)return;
+      const v=parseInt(inp.value);
+      if(isNaN(v))return;
+      inp.disabled=true;
+      const ok=v===items[idx].result;
+      if(ok)bon++;
+      showResult(ok,"La réponse était "+items[idx].result,function(){idx++;step();});
+    }
+    step();
+  }};
+}
+
+// --- M5 Soustractions posées ---
+function exM5(items){
+  return {label:"M5 · Soustractions posées",run:function(body,done){
+    let idx=0,bon=0;
+    function step(){
+      if(idx>=items.length){done(bon,items.length);return;}
+      const it=items[idx];
+      const maxLen=Math.max(it.a.length,it.b.length,3);
+      body.innerHTML="<div class=\"ex-label math\">Soustraction posée — "+(idx+1)+"/"+items.length+"</div>"+
+        "<p class=\"ex-question\">Effectue la soustraction :</p>"+
+        "<div><div class=\"op-wrap\">"+
+        "<span class=\"op-line\">  "+it.a.padStart(maxLen," ")+"</span>"+
+        "<span class=\"op-line\">− "+it.b.padStart(maxLen," ")+"</span>"+
+        "<hr class=\"op-sep\">"+
+        "<input class=\"text-input\" type=\"number\" id=\"inp\" style=\"max-width:"+(maxLen+2)+"ch;text-align:right;margin-top:6px;padding:4px 8px;font-size:22px;font-family:monospace\">"+
+        "</div></div>"+fbNextHTML();
+      bindEnter("inp",val);el("inp").focus();
+    }
+    function val(){
+      const inp=el("inp");
+      if(inp.disabled)return;
+      const v=parseInt(inp.value);
+      if(isNaN(v))return;
+      inp.disabled=true;
+      const ok=v===items[idx].result;
+      if(ok)bon++;
+      showResult(ok,"La réponse était "+items[idx].result,function(){idx++;step();});
+    }
+    step();
+  }};
+}
+
+// --- M6 Problèmes (saisie) ---
+function exM6(items){
+  return {label:"M6 · Problèmes",run:function(body,done){
+    let idx=0,bon=0;
+    function step(){
+      if(idx>=items.length){done(bon,items.length);return;}
+      const it=items[idx];
+      body.innerHTML="<div class=\"ex-label math\">Problème — "+(idx+1)+"/"+items.length+"</div>"+
+        "<p class=\"ex-question\">"+it.q+"</p>"+
+        "<input class=\"text-input\" type=\"number\" id=\"inp\" style=\"max-width:180px\" placeholder=\"Résultat…\">"+
+        fbNextHTML();
+      bindEnter("inp",val);el("inp").focus();
+    }
+    function val(){
+      const inp=el("inp");
+      if(inp.disabled)return;
+      const v=parseInt(inp.value);
+      if(isNaN(v))return;
+      inp.disabled=true;
+      const it=items[idx];
+      const ok=v===it.r;
+      if(ok)bon++;
+      showResult(ok,"La réponse était "+it.r+(it.u?" "+it.u:""),function(){idx++;step();});
+    }
+    step();
+  }};
+}
+
+// --- Moteur chrono commun (M7 / M8) ---
+function exChrono(label,titre,duration,genQ){
+  return {label:label,run:function(body,done){
+    let bon=0,total=0,remaining=duration,over=false;
+    let cur=genQ();
+    function fmt(s){const m=Math.floor(s/60),ss=s%60;return m>0?m+":"+(ss<10?"0":"")+ss:ss+"s";}
+    body.innerHTML="<div class=\"ex-label math\">"+titre+"</div>"+
+      "<div class=\"chrono-wrap\">"+
+      "<span class=\"live-score\" id=\"sc\">0 / 0</span>"+
+      "<div class=\"chrono-bar-wrap\"><div class=\"chrono-bar-fill\" id=\"bar\" style=\"width:100%\"></div></div>"+
+      "<span id=\"tm\" style=\"font-size:18px;font-weight:700;min-width:48px\">"+fmt(duration)+"</span></div>"+
+      "<p class=\"ex-question\" id=\"q\">"+cur.q+"</p>"+
+      "<input class=\"text-input\" type=\"number\" id=\"inp\" style=\"max-width:120px\" placeholder=\"?\">"+
+      "<div class=\"input-feedback\" id=\"fb\"></div>"+
+      "<button class=\"validate-btn\" id=\"vb\" style=\"margin-top:8px\">Valider</button>"+
+      "<br><button class=\"next-btn\" id=\"nx\">Suivant →</button>";
+    el("vb").addEventListener("click",val);
+    bindEnter("inp",val);el("inp").focus();
+    window._exTimer=setInterval(function(){
+      remaining--;
+      const bar=el("bar"),tm=el("tm");
+      if(bar)bar.style.width=(remaining/duration*100)+"%";
+      if(tm)tm.textContent=fmt(remaining);
+      if(remaining<=20&&bar)bar.style.background="#F2C12E";
+      if(remaining<=10&&bar)bar.style.background="#C8311B";
+      if(remaining<=0){clearTimer();finish();}
+    },1000);
+    function finish(){
+      if(over)return;over=true;
+      el("inp").disabled=true;el("vb").disabled=true;
+      const fb=el("fb");
+      fb.textContent="⏱ Temps écoulé ! Score : "+bon+" / "+total;
+      fb.className="input-feedback ok";
+      const nx=el("nx");nx.style.display="inline-block";
+      nx.onclick=function(){done(bon,total||1);};nx.focus();
+    }
+    function val(){
+      if(over)return;
+      const inp=el("inp");
+      const v=parseInt(inp.value);
+      if(isNaN(v))return;
+      total++;
+      const fb=el("fb");
+      if(v===cur.ans){fb.textContent="✓";fb.className="input-feedback ok";bon++;}
+      else{fb.textContent="✗ "+cur.ans;fb.className="input-feedback ko";}
+      el("sc").textContent=bon+" / "+total;
+      cur=genQ();
+      setTimeout(function(){
+        if(over)return;
+        const q=el("q");if(q)q.textContent=cur.q;
+        if(inp){inp.value="";inp.focus();}
+        if(fb)fb.textContent="";
+      },400);
+    }
+  }};
+}
+function exM7(){
+  return exChrono("M7 · Tables d’addition (1 min)","Tables d’addition — 1 minute",60,function(){
+    const a=Math.floor(Math.random()*11),b=Math.floor(Math.random()*11),c=a+b;
+    const t=Math.floor(Math.random()*3);
+    if(t===0)return{q:a+" + "+b+" = ?",ans:c};
+    if(t===1)return{q:a+" + ? = "+c,ans:b};
+    return{q:"? + "+b+" = "+c,ans:a};
+  });
+}
+function exM8(){
+  return exChrono("M8 · Calcul rapide (3 min)","Calcul rapide — 3 minutes",180,function(){
+    if(Math.random()<0.5){
+      const a=Math.floor(Math.random()*49)+10;
+      const bMax=Math.min(49,99-a);
+      const b=Math.floor(Math.random()*bMax)+1;
+      return{q:a+" + "+b+" = ?",ans:a+b};
+    }
+    const diz=(Math.floor(Math.random()*8)+2)*10;
+    const a=diz-Math.floor(Math.random()*9)-1;
+    return{q:a+" + ? = "+diz,ans:diz-a};
+  });
+}
+
+// --- M9 Lecture des nombres (TTS + clic parmi 6) ---
+function exM9(items){
+  return {label:"M9 · Lecture des nombres",run:function(body,done){
+    let idx=0,bon=0;
+    function play(){const w=numToFr(items[idx].n);tts(w,0.85,function(){setTimeout(function(){tts(w,0.85);},500);});}
+    function step(){
+      if(idx>=items.length){done(bon,items.length);return;}
+      const it=items[idx];
+      const choices=shuf(it.c);
+      body.innerHTML="<div class=\"ex-label math\">Lecture des nombres — "+(idx+1)+"/"+items.length+"</div>"+
+        "<p class=\"ex-question\">Clique sur le nombre que tu entends :</p>"+
+        "<button class=\"play-btn\" id=\"pl\">▶ Écouter</button>"+
+        "<div class=\"choice-row\" id=\"row\">"+choices.map(function(c){return "<button class=\"choice-btn\" data-n=\""+c+"\">"+c+"</button>";}).join("")+"</div>"+
+        fbNextHTML();
+      el("pl").addEventListener("click",play);
+      body.querySelectorAll(".choice-btn").forEach(function(b){
+        b.addEventListener("click",function(){
+          if(b.disabled)return;
+          body.querySelectorAll(".choice-btn").forEach(function(x){
+            x.disabled=true;
+            if(parseInt(x.dataset.n)===it.n)x.classList.add("correct");
+          });
+          const ok=parseInt(b.dataset.n)===it.n;
+          if(!ok)b.classList.add("wrong");
+          if(ok)bon++;
+          el("pl").disabled=true;
+          showResult(ok,"C’était "+it.n,function(){idx++;step();});
+        });
+      });
+      setTimeout(play,400);
+    }
+    step();
+  }};
+}
+
+// --- M10 Droite graduée ---
+function exM10(items){
+  return {label:"M10 · Droite graduée",run:function(body,done){
+    let idx=0,bon=0;
+    function step(){
+      if(idx>=items.length){done(bon,items.length);return;}
+      const it=items[idx];
+      const pct=(it.val-it.min)/(it.max-it.min);
+      const X1=60,X2=440,Y=60;
+      const px=X1+pct*(X2-X1);
+      let ticks="";
+      for(let v=it.min+it.step;v<it.max;v+=it.step){
+        const tx=X1+(v-it.min)/(it.max-it.min)*(X2-X1);
+        ticks+="<line x1=\""+tx+"\" y1=\""+(Y-5)+"\" x2=\""+tx+"\" y2=\""+(Y+5)+"\" stroke=\"#1A1A1A\" stroke-width=\"1.5\"/>";
+      }
+      body.innerHTML="<div class=\"ex-label math\">Droite graduée — "+(idx+1)+"/"+items.length+"</div>"+
+        "<p class=\"ex-question\">Quel nombre est indiqué par la flèche rouge ?</p>"+
+        "<svg class=\"grad-svg\" viewBox=\"0 0 500 100\" xmlns=\"http://www.w3.org/2000/svg\">"+
+        "<line x1=\""+X1+"\" y1=\""+Y+"\" x2=\""+X2+"\" y2=\""+Y+"\" stroke=\"#1A1A1A\" stroke-width=\"2\"/>"+
+        "<line x1=\""+X1+"\" y1=\""+(Y-8)+"\" x2=\""+X1+"\" y2=\""+(Y+8)+"\" stroke=\"#1A1A1A\" stroke-width=\"2\"/>"+
+        "<line x1=\""+X2+"\" y1=\""+(Y-8)+"\" x2=\""+X2+"\" y2=\""+(Y+8)+"\" stroke=\"#1A1A1A\" stroke-width=\"2\"/>"+
+        ticks+
+        "<text x=\""+X1+"\" y=\""+(Y+24)+"\" text-anchor=\"middle\" font-size=\"13\" fill=\"#1A1A1A\">"+it.min+"</text>"+
+        "<text x=\""+X2+"\" y=\""+(Y+24)+"\" text-anchor=\"middle\" font-size=\"13\" fill=\"#1A1A1A\">"+it.max+"</text>"+
+        "<line x1=\""+px+"\" y1=\""+(Y-20)+"\" x2=\""+px+"\" y2=\""+Y+"\" stroke=\"#C8311B\" stroke-width=\"2\"/>"+
+        "<polygon points=\""+px+","+Y+" "+(px-5)+","+(Y-12)+" "+(px+5)+","+(Y-12)+"\" fill=\"#C8311B\"/>"+
+        "<text x=\""+px+"\" y=\""+(Y-24)+"\" text-anchor=\"middle\" font-size=\"13\" fill=\"#1B3FA0\" font-weight=\"bold\">?</text>"+
+        "</svg>"+
+        "<input class=\"text-input\" type=\"number\" id=\"inp\" style=\"max-width:120px\" placeholder=\"?\">"+
+        fbNextHTML();
+      bindEnter("inp",val);el("inp").focus();
+    }
+    function val(){
+      const inp=el("inp");
+      if(inp.disabled)return;
+      const v=parseInt(inp.value);
+      if(isNaN(v))return;
+      inp.disabled=true;
+      const ok=v===items[idx].val;
+      if(ok)bon++;
+      showResult(ok,"La réponse était "+items[idx].val,function(){idx++;step();});
+    }
+    step();
+  }};
+}
+
+// --- F1 Dictée de mots (mot -> phrase audio (jamais affichée) -> mot) ---
+function exF1(items){
+  return {label:"F1 · Dictée de mots",run:function(body,done){
+    let idx=0,bon=0;
+    function play(){
+      const it=items[idx];
+      tts(it.m,0.75,function(){setTimeout(function(){tts(it.p,0.85,function(){setTimeout(function(){tts(it.m,0.75);},300);});},400);});
+    }
+    function step(){
+      if(idx>=items.length){done(bon,items.length);return;}
+      const it=items[idx];
+      body.innerHTML="<div class=\"ex-label fr\">Dictée de mots — "+(idx+1)+"/"+items.length+"</div>"+
+        "<p class=\"ex-question\">Écris le mot que tu entends.</p>"+
+        "<p class=\"dictee-hint\">Indice : "+it.m.length+" lettres</p>"+
+        "<button class=\"play-btn\" id=\"pl\">▶ Écouter</button><br>"+
+        "<input class=\"text-input\" type=\"text\" id=\"inp\" style=\"max-width:240px\" placeholder=\"Écris le mot…\" autocomplete=\"off\" spellcheck=\"false\">"+
+        fbNextHTML();
+      el("pl").addEventListener("click",play);
+      bindEnter("inp",val);
+      setTimeout(play,400);
+    }
+    function val(){
+      const inp=el("inp");
+      if(inp.disabled)return;
+      const v=inp.value.trim().toLowerCase();
+      if(!v)return;
+      inp.disabled=true;el("pl").disabled=true;
+      const ok=v===items[idx].m.toLowerCase();
+      if(ok)bon++;
+      showResult(ok,"La réponse était : "+items[idx].m,function(){idx++;step();});
+    }
+    step();
+  }};
+}
+
+// --- F2/F3 clic sur mots (data-attributes, pas de texte dans onclick) ---
+function exClickWords(items,label,shortName,question,answerKey,answerName){
+  return {label:label,run:function(body,done){
+    let idx=0,bon=0,selected=[];
+    function step(){
+      if(idx>=items.length){done(bon,items.length);return;}
+      const it=items[idx];
+      selected=[];
+      body.innerHTML="<div class=\"ex-label fr\">"+shortName+" — "+(idx+1)+"/"+items.length+"</div>"+
+        "<p class=\"ex-question\">"+question+"</p>"+
+        "<div class=\"phrase-words\" id=\"pw\"></div>"+
+        "<button class=\"confirm-sel-btn\" id=\"cf\">Confirmer</button>"+
+        fbNextHTML();
+      const pw=el("pw");
+      it.w.forEach(function(word,i){
+        const b=document.createElement("button");
+        b.className="word-btn";
+        b.textContent=word;           // texte via textContent : aucune injection dans un attribut
+        b.dataset.i=i;
+        b.addEventListener("click",function(){
+          if(b.disabled)return;
+          const p=selected.indexOf(i);
+          if(p===-1){selected.push(i);b.classList.add("selected");}
+          else{selected.splice(p,1);b.classList.remove("selected");}
+        });
+        pw.appendChild(b);
+      });
+      el("cf").addEventListener("click",function(){
+        if(el("cf").disabled||selected.length===0)return;
+        el("cf").disabled=true;
+        const expected=it[answerKey].slice().sort(function(a,b){return a-b;});
+        const sel=selected.slice().sort(function(a,b){return a-b;});
+        const ok=JSON.stringify(sel)===JSON.stringify(expected);
+        const btns=pw.querySelectorAll(".word-btn");
+        btns.forEach(function(b){b.disabled=true;});
+        expected.forEach(function(i){btns[i].classList.add("correct");});
+        sel.forEach(function(i){if(expected.indexOf(i)===-1)btns[i].classList.add("wrong");});
+        if(ok)bon++;
+        showResult(ok,answerName+" : "+expected.map(function(i){return it.w[i];}).join(" "),function(){idx++;step();});
+      });
+    }
+    step();
+  }};
+}
+function exF2(items){return exClickWords(items,"F2 · Le sujet","Le sujet","Clique sur le(s) mot(s) qui forment le sujet, puis confirme :","s","Le sujet était");}
+function exF3(items){return exClickWords(items,"F3 · Le verbe","Le verbe","Clique sur le verbe de la phrase, puis confirme :","v","Le verbe était");}
+
+// --- Moteur choix parmi boutons (F4 classes / F6 temps) ---
+function exChoice(items,label,shortName,question,options,getS,getC,fmtOpt){
+  return {label:label,run:function(body,done){
+    let idx=0,bon=0;
+    function step(){
+      if(idx>=items.length){done(bon,items.length);return;}
+      const it=items[idx];
+      body.innerHTML="<div class=\"ex-label fr\">"+shortName+" — "+(idx+1)+"/"+items.length+"</div>"+
+        "<p class=\"ex-question\">"+question+"<br><em>"+getS(it)+"</em></p>"+
+        "<div class=\"choice-row\" id=\"row\"></div>"+
+        fbNextHTML();
+      const row=el("row");
+      options.forEach(function(opt){
+        const b=document.createElement("button");
+        b.className="choice-btn";
+        b.textContent=fmtOpt?fmtOpt(opt):opt;
+        b.dataset.o=opt;
+        b.addEventListener("click",function(){
+          if(b.disabled)return;
+          row.querySelectorAll(".choice-btn").forEach(function(x){
+            x.disabled=true;
+            if(x.dataset.o===getC(it))x.classList.add("correct");
+          });
+          const ok=b.dataset.o===getC(it);
+          if(!ok)b.classList.add("wrong");
+          if(ok)bon++;
+          showResult(ok,"C’était : "+getC(it),function(){idx++;step();});
+        });
+        row.appendChild(b);
+      });
+    }
+    step();
+  }};
+}
+function exF4(items){
+  return exChoice(items,"F4 · Classes de mots","Classes de mots","Quelle est la classe du mot souligné ?",
+    ["déterminant","nom commun","nom propre","adjectif"],
+    function(it){return it.s;},function(it){return it.c;},null);
+}
+function exF6(items){
+  return exChoice(items,"F6 · Temps du verbe","Temps du verbe","À quel temps est le verbe en gras ?",
+    ["présent","imparfait","futur","passé composé"],
+    function(it){return it.s;},function(it){return it.t;},
+    function(o){return o==="imparfait"?"l’imparfait":"le "+o;});
+}
+
+// --- F5 Accord de l'adjectif (saisie) ---
+function exF5(items){
+  return {label:"F5 · Accord de l’adjectif",run:function(body,done){
+    let idx=0,bon=0;
+    function step(){
+      if(idx>=items.length){done(bon,items.length);return;}
+      const it=items[idx];
+      body.innerHTML="<div class=\"ex-label fr\">Accord de l’adjectif — "+(idx+1)+"/"+items.length+"</div>"+
+        "<p class=\"ex-question\">Écris l’adjectif correctement accordé :<br><strong>"+it.ph+"</strong></p>"+
+        "<p class=\"dictee-hint\">Adjectif à accorder : ("+it.rad+")</p>"+
+        "<input class=\"text-input\" type=\"text\" id=\"inp\" style=\"max-width:220px\" placeholder=\"Adjectif accordé…\" autocomplete=\"off\" spellcheck=\"false\">"+
+        fbNextHTML();
+      bindEnter("inp",val);el("inp").focus();
+    }
+    function val(){
+      const inp=el("inp");
+      if(inp.disabled)return;
+      const v=inp.value.trim().toLowerCase();
+      if(!v)return;
+      inp.disabled=true;
+      const ok=v===items[idx].exp.toLowerCase();
+      if(ok)bon++;
+      showResult(ok,"La réponse était : "+items[idx].exp,function(){idx++;step();});
+    }
+    step();
+  }};
+}
+
+// --- F7 Conjugaison (saisie à trou) ---
+function exF7(items){
+  return {label:"F7 · Conjugaison",run:function(body,done){
+    let idx=0,bon=0;
+    function step(){
+      if(idx>=items.length){done(bon,items.length);return;}
+      const it=items[idx];
+      body.innerHTML="<div class=\"ex-label fr\">Conjugaison — "+(idx+1)+"/"+items.length+"</div>"+
+        "<p class=\"ex-question\">Écris le verbe <em>"+it.vb+"</em> au <em>"+it.tn+"</em> :<br><strong>"+it.bef+"_____"+it.aft+"</strong></p>"+
+        "<input class=\"text-input\" type=\"text\" id=\"inp\" style=\"max-width:240px\" placeholder=\"Forme conjuguée…\" autocomplete=\"off\" spellcheck=\"false\">"+
+        fbNextHTML();
+      bindEnter("inp",val);el("inp").focus();
+    }
+    function val(){
+      const inp=el("inp");
+      if(inp.disabled)return;
+      const v=inp.value.trim().toLowerCase().replace(/\s+/g," ");
+      if(!v)return;
+      inp.disabled=true;
+      const ok=v===items[idx].exp.toLowerCase();
+      if(ok)bon++;
+      showResult(ok,"La réponse était : "+items[idx].exp,function(){idx++;step();});
+    }
+    step();
+  }};
+}
+
+// --- F8 Fluence (chrono 1 min, clic dernier mot) ---
+function exF8(text){
+  return {label:"F8 · Fluence (mots/min)",run:function(body,done){
+    const words=text.split(/\s+/).filter(Boolean);
+    let started=false,finished=false,elapsed=0,selectedWord=-1;
+    const DURATION=60,WPL=11;
+    const lines=[];
+    for(let i=0;i<words.length;i+=WPL)lines.push(words.slice(i,i+WPL));
+    function buildText(clickable){
+      const frag=document.createDocumentFragment();
+      let wi=0;
+      lines.forEach(function(line){
+        const div=document.createElement("div");div.className="fluence-line";
+        const wsp=document.createElement("span");wsp.className="fluence-line-words";
+        line.forEach(function(w){
+          const i=wi++;
+          const sp=document.createElement("span");
+          sp.className="fluence-word"+(clickable?" clickable":"")+(i===selectedWord?" selected":"");
+          sp.textContent=w+" ";
+          if(clickable){
+            sp.addEventListener("click",function(){wordClick(i);});
+          }
+          wsp.appendChild(sp);
+        });
+        const csp=document.createElement("span");csp.className="fluence-line-count";csp.textContent=wi;
+        div.appendChild(wsp);div.appendChild(csp);
+        frag.appendChild(div);
+      });
+      return frag;
+    }
+    function refreshText(clickable){
+      const t=el("fl-text");
+      t.innerHTML="";
+      t.appendChild(buildText(clickable));
+    }
+    function wordClick(i){
+      if(!finished||selectedWord!==-1)return;
+      selectedWord=i;
+      refreshText(true);
+      const wpm=i+1;
+      let msg="Lis chaque jour ! (objectif fin CE2 : 90 mots/min)";
+      if(wpm>=90)msg="Excellent !";
+      else if(wpm>=70)msg="Bien !";
+      else if(wpm>=50)msg="Moyenne CE2";
+      const sw=el("fl-result");
+      sw.innerHTML="<p style=\"font-size:14px;margin:12px 0\">Tu as lu <strong>"+wpm+" mots</strong> en 1 minute. "+msg+"</p>"+
+        "<button class=\"next-btn\" id=\"nx2\" style=\"display:inline-block\">Terminer l’épreuve →</button>";
+      el("nx2").addEventListener("click",function(){done(Math.min(wpm,90),90);});
+    }
+    body.innerHTML="<div class=\"ex-label fr\">Fluence — 1 minute</div>"+
+      "<p style=\"font-size:13px;color:var(--text-muted);margin-bottom:8px\">Lis ce texte à voix haute pendant 1 minute. Quand le temps s’arrête, clique sur le dernier mot lu.</p>"+
+      "<div class=\"fluence-controls\">"+
+      "<button class=\"fluence-start-btn\" id=\"fl-start\">▶ Démarrer</button>"+
+      "<div class=\"fluence-bar-wrap\"><div class=\"fluence-bar-fill\" id=\"fl-bar\" style=\"width:100%\"></div></div>"+
+      "<span class=\"fluence-timer\" id=\"fl-time\">1:00</span></div>"+
+      "<div class=\"fluence-text\" id=\"fl-text\"></div>"+
+      "<div id=\"fl-result\"></div>";
+    refreshText(false);
+    el("fl-start").addEventListener("click",function(){
+      if(started)return;
+      started=true;
+      el("fl-start").disabled=true;
+      window._exTimer=setInterval(function(){
+        elapsed++;
+        const r=DURATION-elapsed;
+        const bar=el("fl-bar"),tm=el("fl-time");
+        if(bar)bar.style.width=(r/DURATION*100)+"%";
+        if(tm){const m=Math.floor(r/60),s=r%60;tm.textContent=m+":"+(s<10?"0":"")+s;}
+        if(elapsed>=DURATION){
+          clearTimer();
+          finished=true;
+          refreshText(true);
+          el("fl-result").innerHTML="<p style=\"font-size:14px;margin:8px 0;font-weight:600\">Clique sur le dernier mot que tu as lu.</p>";
+        }
+      },1000);
+    });
+  }};
+}
+
+// ===================== CONSTRUCTION D'UNE EPREUVE (18 exercices) =====================
+function buildExercises(i){
+  const d=generateEpreuveData();
+  return [
+    exM1(d.m1),exM2(d.m2),exM3(d.m3),exM4(d.m4),exM5(d.m5),
+    exM6(d.m6),exM7(),exM8(),exM9(d.m9),exM10(d.m10),
+    exF1(d.f1),exF2(d.f2),exF3(d.f3),exF4(d.f4),exF5(d.f5),
+    exF6(d.f6),exF7(d.f7),exF8(d.f8)
+  ];
+}
+
+// ===================== DONNEES DES 5 EPREUVES =====================
+// Vérifications arithmétiques :
+// E1 : 43+58=101 ; 374+215=589 ; 96-43=53 ; 752-318=434 ; 137+58=195 ; 246-85=161
+// E2 : 67+45=112 ; 256+438=694 ; 84-37=47 ; 631-244=387 ; 8x7=56 ; 32+18=50
+// E3 : 85+37=122 ; 163+549=712 ; 71-28=43 ; 904-367=537 ; 450-180-95=175 ; 4x9=36
+// E4 : 58+74=132 ; 417+384=801 ; 65-28=37 ; 820-453=367 ; 6x48=288 ; 524+75=599
+// E5 : 76+48=124 ; 529+263=792 ; 83-47=36 ; 746-298=448 ; 364-195=169 ; 60/15=4
+const EPREUVES=[
+// ============ EPREUVE 1 ============
+{name:"Épreuve 1",desc:"sons (eau) · présent",data:{
+  m1:[74,531,289,960],
+  m2:[
+    {parts:[{n:3,t:"C"},{n:2,t:"D"},{n:5,t:"U"}],n:325},
+    {parts:[{n:6,t:"C"},{n:0,t:"D"},{n:8,t:"U"}],n:608}
+  ],
+  m3:[87,219,142,358],
+  m4:[{terms:["43","58"],result:101},{terms:["374","215"],result:589}],
+  m5:[{a:"96",b:"43",result:53},{a:"752",b:"318",result:434}],
+  m6:[
+    {q:"La bibliothèque a 137 livres de romans et 58 documentaires. Combien de livres en tout ?",r:195,u:"livres"},
+    {q:"Léo avait 246 images. Il en donne 85 à sa sœur. Combien lui en reste-t-il ?",r:161,u:"images"}
+  ],
+  m9:[
+    {n:53,c:[35,63,53,43,503,50]},
+    {n:281,c:[281,291,271,821,201,181]},
+    {n:679,c:[679,689,669,779,969,609]}
+  ],
+  m10:[{min:0,max:10,step:1,val:7},{min:100,max:200,step:10,val:140}],
+  f1:[
+    {m:"tableau",p:"La maîtresse écrit au tableau."},
+    {m:"chapeau",p:"Il porte un chapeau rouge."},
+    {m:"gâteau",p:"Maman prépare un gâteau au chocolat."}
+  ],
+  f2:[
+    {w:["Les","élèves","jouent","aux","billes","dans","la","cour."],s:[0,1]},
+    {w:["Mon","petit","frère","range","ses","jouets."],s:[0,1,2]}
+  ],
+  f3:[
+    {w:["Le","chat","dort","sur","le","canapé."],v:[2]},
+    {w:["Nous","mangeons","des","pommes."],v:[1]}
+  ],
+  f4:[
+    {s:"Je déteste le <u>football</u>.",c:"nom commun"},
+    {s:"Il porte une veste <u>bleue</u>.",c:"adjectif"}
+  ],
+  f5:[
+    {ph:"des chaussures … (noir)",rad:"noir",exp:"noires"},
+    {ph:"une porte … (fermé)",rad:"fermé",exp:"fermée"}
+  ],
+  f6:[
+    {s:"Le chien <strong>mange</strong> sa pâtée.",t:"présent"},
+    {s:"Les élèves <strong>porteront</strong> un masque.",t:"futur"}
+  ],
+  f7:[
+    {vb:"chanter",tn:"présent",bef:"Tu ",aft:" une chanson.",exp:"chantes"},
+    {vb:"être",tn:"présent",bef:"Nous ",aft:" contents.",exp:"sommes"}
+  ],
+  f8:"Ce matin, Lila part à la mer avec ses parents. Dans la voiture, elle regarde les champs qui défilent derrière la vitre. Elle voit des vaches, un tracteur rouge et un grand moulin. Quand la voiture arrive au bord de la plage, Lila saute de joie. Elle enlève ses sandales et court sur le sable chaud. Les vagues avancent puis reculent en laissant de jolis coquillages. Lila en ramasse trois pour sa collection. Son père installe le parasol pendant que sa mère prépare le goûter. Après le pique-nique, toute la famille construit un immense château de sable avec quatre tours et un pont-levis. Le soir, fatiguée mais heureuse, Lila s’endort dans la voiture en rêvant déjà aux prochaines vacances au bord de la mer."
+}},
+// ============ EPREUVE 2 ============
+{name:"Épreuve 2",desc:"sons (eil, ille) · imparfait",data:{
+  m1:[46,703,198,875],
+  m2:[
+    {parts:[{n:4,t:"C"},{n:7,t:"D"},{n:3,t:"U"}],n:473},
+    {parts:[{n:2,t:"C"},{n:0,t:"D"},{n:6,t:"U"}],n:206}
+  ],
+  m3:[55,204,129,380],
+  m4:[{terms:["67","45"],result:112},{terms:["256","438"],result:694}],
+  m5:[{a:"84",b:"37",result:47},{a:"631",b:"244",result:387}],
+  m6:[
+    {q:"Une chenille mange 8 feuilles par jour. Combien de feuilles mange-t-elle en 7 jours ?",r:56,u:"feuilles"},
+    {q:"La classe a 32 crayons. La maîtresse en achète 18 de plus. Combien de crayons en tout ?",r:50,u:"crayons"}
+  ],
+  m9:[
+    {n:87,c:[77,87,97,78,807,67]},
+    {n:412,c:[412,402,421,442,512,214]},
+    {n:735,c:[735,725,753,745,635,715]}
+  ],
+  m10:[{min:0,max:20,step:2,val:14},{min:500,max:600,step:10,val:560}],
+  f1:[
+    {m:"soleil",p:"Le soleil brille dans le ciel."},
+    {m:"oreille",p:"Le lapin dresse une oreille."},
+    {m:"famille",p:"Toute la famille mange ensemble."}
+  ],
+  f2:[
+    {w:["La","maîtresse","écrit","au","tableau."],s:[0,1]},
+    {w:["Les","oiseaux","chantent","le","matin."],s:[0,1]}
+  ],
+  f3:[
+    {w:["Le","vent","souffle","très","fort."],v:[2]},
+    {w:["Vous","écrivez","une","lettre."],v:[1]}
+  ],
+  f4:[
+    {s:"<u>Jim</u> pose sa serviette.",c:"nom propre"},
+    {s:"Elle achète <u>un</u> gâteau.",c:"déterminant"}
+  ],
+  f5:[
+    {ph:"une robe … (joli)",rad:"joli",exp:"jolie"},
+    {ph:"des arbres … (grand)",rad:"grand",exp:"grands"}
+  ],
+  f6:[
+    {s:"Les chevaux <strong>galopaient</strong> dans le pré.",t:"imparfait"},
+    {s:"J’<strong>ai vu</strong> un renard hier.",t:"passé composé"}
+  ],
+  f7:[
+    {vb:"parler",tn:"imparfait",bef:"Elle ",aft:" doucement.",exp:"parlait"},
+    {vb:"avoir",tn:"imparfait",bef:"Ils ",aft:" faim.",exp:"avaient"}
+  ],
+  f8:"Dans le grenier de sa grand-mère, Tom découvre une vieille malle en bois. Il souffle sur la poussière et soulève le couvercle qui grince. À l’intérieur, il trouve un manteau rouge, des photos anciennes et une petite boîte dorée. Dans la boîte dort une clé mystérieuse. Tom descend l’escalier quatre à quatre pour montrer son trésor. Sa grand-mère sourit et raconte que cette clé ouvrait la maison de son enfance, une ferme entourée de pommiers. Elle décrit la cour, le puits et le chien qui gardait les poules. Tom écoute, les yeux grands ouverts. Le soir, il range la clé sous son oreiller. Il espère rêver de la ferme, des pommiers en fleurs et de toutes les histoires que sa grand-mère garde encore secrètes."
+}},
+// ============ EPREUVE 3 ============
+{name:"Épreuve 3",desc:"sons (ou, on) · futur",data:{
+  m1:[63,420,815,177],
+  m2:[
+    {parts:[{n:5,t:"C"},{n:3,t:"D"},{n:9,t:"U"}],n:539},
+    {parts:[{n:7,t:"C"},{n:0,t:"D"},{n:0,t:"U"}],n:700}
+  ],
+  m3:[112,98,305,247],
+  m4:[{terms:["85","37"],result:122},{terms:["163","549"],result:712}],
+  m5:[{a:"71",b:"28",result:43},{a:"904",b:"367",result:537}],
+  m6:[
+    {q:"Un marchand a 450 oranges. Il en vend 180 le matin et 95 l’après-midi. Combien lui en reste-t-il ?",r:175,u:"oranges"},
+    {q:"Chaque enfant plante 4 bulbes. Il y a 9 enfants. Combien de bulbes sont plantés en tout ?",r:36,u:"bulbes"}
+  ],
+  m9:[
+    {n:91,c:[81,91,19,901,71,99]},
+    {n:368,c:[368,358,386,468,268,378]},
+    {n:540,c:[540,450,504,530,550,560]}
+  ],
+  m10:[{min:0,max:50,step:5,val:35},{min:200,max:300,step:10,val:230}],
+  f1:[
+    {m:"mouton",p:"Le mouton broute dans le pré."},
+    {m:"bouton",p:"Le bouton de la veste est tombé."},
+    {m:"maison",p:"Nous rentrons à la maison."}
+  ],
+  f2:[
+    {w:["Le","renard","court","dans","la","forêt."],s:[0,1]},
+    {w:["Trois","enfants","jouent","dans","la","cour."],s:[0,1]}
+  ],
+  f3:[
+    {w:["Ma","sœur","lit","un","livre."],v:[2]},
+    {w:["Les","élèves","apprennent","leur","leçon."],v:[2]}
+  ],
+  f4:[
+    {s:"Nous visitons <u>Paris</u>.",c:"nom propre"},
+    {s:"C’est un <u>beau</u> dessin.",c:"adjectif"}
+  ],
+  f5:[
+    {ph:"une porte … (ouvert)",rad:"ouvert",exp:"ouverte"},
+    {ph:"des fleurs … (rouge)",rad:"rouge",exp:"rouges"}
+  ],
+  f6:[
+    {s:"Nous <strong>étions</strong> en retard.",t:"imparfait"},
+    {s:"Tu <strong>rangeras</strong> ta chambre.",t:"futur"}
+  ],
+  f7:[
+    {vb:"chanter",tn:"futur",bef:"Tu ",aft:" une belle chanson.",exp:"chanteras"},
+    {vb:"être",tn:"futur",bef:"Vous ",aft:" en avance.",exp:"serez"}
+  ],
+  f8:"Samedi, le village organise sa grande fête de printemps. Dès le matin, les habitants installent des stands colorés sur la place. Le boulanger propose des brioches dorées, la fleuriste vend des bouquets de tulipes et le fermier apporte du fromage de chèvre. Nora et son cousin Malik font le tour des jeux. Ils pêchent des canards en plastique, lancent des anneaux et gagnent un poisson rouge. À midi, une fanfare traverse la foule avec ses trompettes et son gros tambour. Tout le monde tape des mains en rythme. L’après-midi, un magicien fait disparaître un lapin blanc sous son grand chapeau, puis le fait réapparaître dans la poche d’un spectateur étonné. Le soir venu, des lampions s’allument et la fête se termine par un joli feu d’artifice."
+}},
+// ============ EPREUVE 4 ============
+{name:"Épreuve 4",desc:"sons (an, en) · temps mêlés",data:{
+  m1:[92,345,608,771],
+  m2:[
+    {parts:[{n:1,t:"C"},{n:4,t:"D"},{n:7,t:"U"}],n:147},
+    {parts:[{n:9,t:"C"},{n:2,t:"D"},{n:0,t:"U"}],n:920}
+  ],
+  m3:[503,389,75,412],
+  m4:[{terms:["58","74"],result:132},{terms:["417","384"],result:801}],
+  m5:[{a:"65",b:"28",result:37},{a:"820",b:"453",result:367}],
+  m6:[
+    {q:"Un train a 6 wagons. Chaque wagon transporte 48 passagers. Combien de passagers en tout ?",r:288,u:"passagers"},
+    {q:"Emma avait 524 cartes. Elle en reçoit 75 pour son anniversaire. Combien en a-t-elle maintenant ?",r:599,u:"cartes"}
+  ],
+  m9:[
+    {n:76,c:[66,76,67,86,706,96]},
+    {n:293,c:[293,283,239,393,203,299]},
+    {n:851,c:[851,841,815,861,751,801]}
+  ],
+  m10:[{min:0,max:100,step:10,val:70},{min:300,max:400,step:10,val:350}],
+  f1:[
+    {m:"chanson",p:"Nous chantons une belle chanson."},
+    {m:"enfant",p:"Un enfant joue dans le jardin."},
+    {m:"serpent",p:"Le serpent glisse dans les herbes."}
+  ],
+  f2:[
+    {w:["Les","nuages","cachent","le","soleil."],s:[0,1]},
+    {w:["Mon","chien","aboie","très","fort."],s:[0,1]}
+  ],
+  f3:[
+    {w:["La","pluie","tombe","sur","le","toit."],v:[2]},
+    {w:["Ils","construisent","une","cabane."],v:[1]}
+  ],
+  f4:[
+    {s:"Le <u>chat</u> dort sur le tapis.",c:"nom commun"},
+    {s:"<u>Ma</u> sœur arrive demain.",c:"déterminant"}
+  ],
+  f5:[
+    {ph:"des filles … (courageux)",rad:"courageux",exp:"courageuses"},
+    {ph:"un livre … (intéressant)",rad:"intéressant",exp:"intéressant"}
+  ],
+  f6:[
+    {s:"Le bébé <strong>dormait</strong> tranquillement.",t:"imparfait"},
+    {s:"J’<strong>ai</strong> un nouveau cahier.",t:"présent"}
+  ],
+  f7:[
+    {vb:"marcher",tn:"présent",bef:"Je ",aft:" sur le chemin.",exp:"marche"},
+    {vb:"avoir",tn:"futur",bef:"Nous ",aft:" un beau cadeau.",exp:"aurons"}
+  ],
+  f8:"Ce soir, une tempête de neige recouvre doucement la ville. Depuis sa fenêtre, Adam observe les flocons qui dansent sous les lampadaires. Les toits deviennent blancs, les voitures ressemblent à de gros gâteaux à la crème. Le lendemain matin, l’école est fermée. Adam enfile son bonnet, ses gants et ses bottes fourrées. Dehors, ses amis l’attendent déjà. Ensemble, ils roulent trois énormes boules pour fabriquer un bonhomme de neige. Ils lui plantent une carotte en guise de nez et deux cailloux pour les yeux. Ensuite, la bataille de boules de neige commence entre les rires et les cris. À midi, les enfants rentrent se réchauffer autour d’un chocolat chaud. Adam colle son nez à la vitre et espère que la neige tiendra encore toute la semaine."
+}},
+// ============ EPREUVE 5 ============
+{name:"Épreuve 5",desc:"sons (é, è, ê) · révision",data:{
+  m1:[38,507,694,183],
+  m2:[
+    {parts:[{n:8,t:"C"},{n:5,t:"D"},{n:4,t:"U"}],n:854},
+    {parts:[{n:4,t:"C"},{n:6,t:"D"},{n:1,t:"U"}],n:461}
+  ],
+  m3:[600,78,299,451],
+  m4:[{terms:["76","48"],result:124},{terms:["529","263"],result:792}],
+  m5:[{a:"83",b:"47",result:36},{a:"746",b:"298",result:448}],
+  m6:[
+    {q:"Une fermière ramasse 364 œufs en une semaine. Elle en vend 195. Combien lui en reste-t-il ?",r:169,u:"œufs"},
+    {q:"Un enfant lit 15 pages par jour. En combien de jours lira-t-il un livre de 60 pages ?",r:4,u:"jours"}
+  ],
+  m9:[
+    {n:69,c:[59,69,96,79,609,68]},
+    {n:157,c:[157,147,175,257,117,167]},
+    {n:982,c:[982,972,928,892,902,988]}
+  ],
+  m10:[{min:0,max:1000,step:100,val:600},{min:40,max:60,step:2,val:52}],
+  f1:[
+    {m:"forêt",p:"Les animaux vivent dans la forêt."},
+    {m:"fenêtre",p:"Ouvre la fenêtre du salon."},
+    {m:"rivière",p:"Les poissons nagent dans la rivière."}
+  ],
+  f2:[
+    {w:["Le","jardinier","arrose","ses","plantes."],s:[0,1]},
+    {w:["Toute","la","classe","part","en","voyage."],s:[0,1,2]}
+  ],
+  f3:[
+    {w:["Les","enfants","dessinent","des","fleurs."],v:[2]},
+    {w:["Tu","lis","une","belle","histoire."],v:[1]}
+  ],
+  f4:[
+    {s:"<u>Antoine</u> aime le sport.",c:"nom propre"},
+    {s:"C’est une <u>grande</u> maison.",c:"adjectif"}
+  ],
+  f5:[
+    {ph:"des habits … (propre)",rad:"propre",exp:"propres"},
+    {ph:"une journée … (ensoleillé)",rad:"ensoleillé",exp:"ensoleillée"}
+  ],
+  f6:[
+    {s:"Vous <strong>avez mangé</strong> tout le gâteau.",t:"passé composé"},
+    {s:"Elle <strong>dessine</strong> une fleur.",t:"présent"}
+  ],
+  f7:[
+    {vb:"jouer",tn:"imparfait",bef:"Nous ",aft:" dans le parc.",exp:"jouions"},
+    {vb:"être",tn:"présent",bef:"Elle ",aft:" contente.",exp:"est"}
+  ],
+  f8:"Au fond du jardin de l’école, les élèves ont planté un petit potager. Chaque semaine, une équipe différente s’en occupe avec soin. Cette semaine, c’est le tour de Chloé et de ses camarades. Ils arrosent les tomates, arrachent les mauvaises herbes et vérifient les salades. Sous une grande feuille, Chloé découvre une famille d’escargots bien cachée. Elle appelle ses amis pour les observer sans les déranger. Le maître explique que les escargots sortent surtout après la pluie. Plus loin, des radis pointent enfin leur nez rose hors de la terre. Les enfants les cueillent et les rangent fièrement dans un panier. Demain, ils les partageront à la cantine avec toute l’école. Chloé sourit : grâce au potager, la classe apprend la patience et le plaisir de récolter ce que l’on sème."
+}}
+];
+
+// ===================== INIT =====================
+el("back-home-btn").addEventListener("click",goHome);
+renderHome();
+</script>
+</body>
+</html>

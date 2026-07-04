@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Space Learning — Choisis ton niveau</title>
+<script data-goatcounter="https://space-learning.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<style>
+:root {
+  --noir:#1A1A1A;
+  --rouge:#C8311B;
+  --bleu:#1B3FA0;
+  --jaune:#F2C12E;
+  --vert:#2D9C5C;
+  --corail:#E8598A;
+  --surface-1:#F7F5F0;
+  --surface-2:#fff;
+  --border:#E3E0D8;
+  --border-strong:#BBB;
+  --text-primary:#1A1A1A;
+  --text-muted:#777;
+  --radius:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:#FDFCF9;color:var(--text-primary)}
+button{cursor:pointer;font-family:inherit}
+
+/* HEADER (identique index.html / epreuves.html) */
+#app-header{
+  position:sticky;top:0;z-index:100;
+  background:var(--noir);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;gap:12px;
+}
+#header-left{display:flex;align-items:center;gap:12px}
+#header-text .brand{color:#fff;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:3px}
+#header-text .sub{color:#999;font-size:11px;letter-spacing:4px;margin-top:2px}
+#header-shapes{display:flex;align-items:center;gap:10px}
+#header-shapes a{
+  color:#ccc;font-size:12px;font-weight:600;text-decoration:none;
+  border:1px solid #555;border-radius:4px;padding:5px 10px;white-space:nowrap;
+}
+#header-shapes a:hover{background:#333;color:#fff}
+
+/* MAIN */
+#main{padding:32px 16px 60px;max-width:960px;margin:0 auto}
+.hero-title{font-size:32px;font-weight:900;text-align:center;margin-bottom:8px;letter-spacing:-0.5px}
+.hero-sub{font-size:15px;color:var(--text-muted);text-align:center;margin-bottom:36px}
+
+/* GRID */
+.level-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:820px;margin:0 auto}
+@media(max-width:640px){.level-grid{grid-template-columns:1fr}}
+
+.level-card{
+  position:relative;
+  overflow:hidden;
+  border-radius:14px;
+  border:3px solid var(--noir);
+  min-height:190px;
+  padding:20px;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  cursor:pointer;
+  transition:transform .15s, box-shadow .15s;
+  box-shadow:5px 5px 0 rgba(0,0,0,.15);
+}
+.level-card:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 rgba(0,0,0,.18)}
+.level-card.locked{
+  cursor:not-allowed;
+  filter:grayscale(1);
+  opacity:.72;
+  box-shadow:4px 4px 0 rgba(0,0,0,.1);
+}
+.level-card.locked:hover{transform:none;box-shadow:4px 4px 0 rgba(0,0,0,.1)}
+
+.level-decor{position:absolute;inset:0;z-index:0}
+.level-content{position:relative;z-index:2}
+.level-name{font-size:26px;font-weight:900;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.25);margin-bottom:6px;letter-spacing:.5px}
+.level-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+  padding:4px 12px;border-radius:20px;color:#fff;
+  background:rgba(0,0,0,.35);
+  width:fit-content;
+}
+.level-badge.dispo{background:var(--vert)}
+.lock-icon{position:absolute;top:16px;right:16px;z-index:3}
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--noir);color:#fff;padding:10px 20px;border-radius:24px;
+  font-size:14px;font-weight:600;opacity:0;pointer-events:none;
+  transition:opacity .2s, transform .2s;z-index:200;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.footer-note{text-align:center;font-size:12.5px;color:var(--text-muted);margin-top:32px}
+</style>
+</head>
+<body>
+
+<header id="app-header">
+  <div id="header-left">
+    <svg id="logo-svg" width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="20" cy="20" r="6" fill="#F2C12E"/>
+      <ellipse cx="20" cy="20" rx="18" ry="7" fill="none" stroke="#1B3FA0" stroke-width="2"/>
+      <ellipse cx="20" cy="20" rx="18" ry="7" fill="none" stroke="#1B3FA0" stroke-width="2" transform="rotate(60 20 20)"/>
+      <ellipse cx="20" cy="20" rx="18" ry="7" fill="none" stroke="#1B3FA0" stroke-width="2" transform="rotate(-60 20 20)"/>
+      <circle cx="38" cy="20" r="2.5" fill="#C8311B"/>
+      <circle cx="29" cy="5.3" r="2.5" fill="#F2C12E"/>
+      <circle cx="11" cy="34.7" r="2.5" fill="#2D9C5C"/>
+    </svg>
+    <div id="header-text">
+      <div class="brand">Space Learning</div>
+      <div class="sub">CE2 · 2025</div>
+    </div>
+  </div>
+  <div id="header-shapes">
+    <a href="entrainement.html">Entraînement →</a>
+    <a href="epreuves.html">Épreuves →</a>
+    <svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="#1B3FA0"/></svg>
+    <svg width="13" height="13" viewBox="0 0 13 13"><rect width="13" height="13" fill="#C8311B"/></svg>
+    <svg width="14" height="12" viewBox="0 0 14 12"><polygon points="7,0 14,12 0,12" fill="#F2C12E"/></svg>
+  </div>
+</header>
+
+<div id="main">
+  <div class="hero-title">Choisis ton niveau</div>
+  <div class="hero-sub">Révisions circulaires, du CE2 à la sixième</div>
+
+  <div class="level-grid">
+
+    <!-- CE2 - actif -->
+    <a class="level-card" id="card-ce2" href="entrainement.html" style="background:#1B3FA0;text-decoration:none">
+      <svg class="level-decor" viewBox="0 0 300 190" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="300" height="190" fill="#1B3FA0"/>
+        <circle cx="250" cy="30" r="70" fill="#F2C12E" opacity="0.9"/>
+        <circle cx="250" cy="30" r="70" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="4 6" opacity="0.5"/>
+        <polygon points="30,150 80,60 130,150" fill="#C8311B" opacity="0.9"/>
+        <circle cx="270" cy="150" r="18" fill="#2D9C5C"/>
+        <circle cx="20" cy="20" r="8" fill="#fff" opacity="0.6"/>
+        <circle cx="45" cy="35" r="4" fill="#fff" opacity="0.5"/>
+      </svg>
+      <div class="level-content">
+        <div class="level-name">CE2</div>
+        <span class="level-badge dispo">✓ Disponible</span>
+      </div>
+    </a>
+
+    <!-- CM1 - verrouille -->
+    <div class="level-card locked" data-level="CM1" style="background:#555">
+      <svg class="level-decor" viewBox="0 0 300 190" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="300" height="190" fill="#555"/>
+        <ellipse cx="90" cy="130" rx="90" ry="55" fill="#888"/>
+        <polygon points="220,20 270,80 220,140 170,80" fill="#333" opacity="0.7"/>
+        <circle cx="240" cy="150" r="20" fill="#999" opacity="0.8"/>
+        <line x1="0" y1="40" x2="300" y2="10" stroke="#fff" stroke-width="1.5" stroke-dasharray="6 6" opacity="0.3"/>
+      </svg>
+      <svg class="lock-icon" width="26" height="26" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2" fill="#fff" opacity="0.9"/><path d="M8 11V7a4 4 0 0 1 8 0v4" fill="none" stroke="#fff" stroke-width="2.2" opacity="0.9"/></svg>
+      <div class="level-content">
+        <div class="level-name">CM1</div>
+        <span class="level-badge">Bientôt</span>
+      </div>
+    </div>
+
+    <!-- CM2 - verrouille -->
+    <div class="level-card locked" data-level="CM2" style="background:#555">
+      <svg class="level-decor" viewBox="0 0 300 190" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="300" height="190" fill="#555"/>
+        <polyline points="0,150 40,110 80,150 120,90 160,150 200,100 240,150 300,80" fill="none" stroke="#888" stroke-width="14"/>
+        <circle cx="60" cy="35" r="45" fill="#333" opacity="0.7"/>
+        <circle cx="60" cy="35" r="45" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="3 5" opacity="0.4"/>
+      </svg>
+      <svg class="lock-icon" width="26" height="26" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2" fill="#fff" opacity="0.9"/><path d="M8 11V7a4 4 0 0 1 8 0v4" fill="none" stroke="#fff" stroke-width="2.2" opacity="0.9"/></svg>
+      <div class="level-content">
+        <div class="level-name">CM2</div>
+        <span class="level-badge">Bientôt</span>
+      </div>
+    </div>
+
+    <!-- 6e - verrouille -->
+    <div class="level-card locked" data-level="6e" style="background:#555">
+      <svg class="level-decor" viewBox="0 0 300 190" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="300" height="190" fill="#555"/>
+        <path d="M0,190 A90,90 0 0 1 180,190 Z" fill="#888"/>
+        <rect x="190" y="20" width="70" height="70" fill="#333" opacity="0.75" transform="rotate(20 225 55)"/>
+        <circle cx="260" cy="150" r="16" fill="#999"/>
+        <circle cx="30" cy="30" r="6" fill="#fff" opacity="0.5"/>
+      </svg>
+      <svg class="lock-icon" width="26" height="26" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2" fill="#fff" opacity="0.9"/><path d="M8 11V7a4 4 0 0 1 8 0v4" fill="none" stroke="#fff" stroke-width="2.2" opacity="0.9"/></svg>
+      <div class="level-content">
+        <div class="level-name">Sixième</div>
+        <span class="level-badge">Bientôt</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-note">Révisions Circulaires — un entraînement qui revient sur chaque notion, encore et encore.</div>
+
+  <div id="testi-section" style="max-width:700px;margin:44px auto 0;padding:0 4px">
+    <div style="font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);text-align:center;margin-bottom:14px">Ce qu'on en dit</div>
+    <div id="testi-list" style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+      <div style="background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;font-size:14px;color:var(--text-primary);font-style:italic">« Les révisions circulaires m'ont bien aidé avant l'évaluation. » — un élève de CE2</div>
+    </div>
+    <div style="text-align:center">
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSceRe2XJ2yEDV9INtq3xtt7utLTeA0XRTx9Ql78pDeJK60JNQ/viewform?usp=header" target="_blank" rel="noopener" style="display:inline-block;background:var(--noir);color:#fff;font-size:13px;font-weight:700;text-decoration:none;padding:9px 20px;border-radius:20px">✏️ Donne ton avis</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Bientôt disponible</div>
+
+<script>
+function showToast(){
+  const t=document.getElementById('toast');
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(()=>{t.classList.remove('show');},1600);
+}
+document.querySelectorAll('.level-card.locked').forEach(function(card){
+  card.addEventListener('click',function(){
+    showToast();
+  });
+});
+</script>
+
+</body>
+</html>
