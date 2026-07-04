@@ -506,21 +506,43 @@ function qcmScreen(items,getQ,getChoices,getCorrect,getExpl,color,domId){
     body.innerHTML=progBar()+
       `<p class="qcm-question">${q}</p>
       <div class="qcm-choices" id="qcm-choices">${choices.map(c=>`<button class="qcm-btn" onclick="qcmAns(this,'${esc(c)}','${esc(correct)}')">${c}</button>`).join('')}</div>
-      <div class="feedback-box" id="fb">${expl}</div>
+      <div class="feedback-box" id="fb" data-expl="${escAttr(expl)}"></div>
       <button class="next-btn" id="nxt" onclick="qcmNext()">Suivant →</button>`;
   }
   window.qcmAns=function(btn,ans,correct){
     const all=document.querySelectorAll('.qcm-btn');
     all.forEach(b=>{b.disabled=true;if(b.textContent===correct)b.classList.add('correct');});
-    if(ans===correct){btn.classList.add('correct');bon++;}
-    else btn.classList.add('wrong');
-    document.getElementById('fb').style.display='block';
+    const fb=document.getElementById('fb');
+    if(ans===correct){
+      btn.classList.add('correct');bon++;
+    }else{
+      btn.classList.add('wrong');
+      fb.innerHTML=fb.getAttribute('data-expl');
+      fb.style.display='block';
+    }
     document.getElementById('nxt').style.display='inline-block';
   };
   window.qcmNext=function(){idx++;render();};
   render();
 }
 function esc(s){return String(s).replace(/'/g,"\\'");}
+function escAttr(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// Rappels pedagogiques affiches uniquement en cas d'echec (jamais en cas de reussite)
+const LESSONS={
+  M1:"Rappel : attention à « soixante-dix », « quatre-vingts » et « quatre-vingt-un » (pas de « s » avec « un »).",
+  M3:"Rappel : compare les chiffres de gauche à droite pour ranger les nombres.",
+  M4:"Rappel : aligne les unités à droite, puis additionne colonne par colonne en n'oubliant pas les retenues.",
+  M5:"Rappel : aligne les unités à droite, puis soustrais colonne par colonne en gérant les retenues.",
+  M6:"Rappel : repère les mots clés (« en tout », « il reste », « de plus que »…) pour choisir l'opération.",
+  M9:"Rappel : attention à ne pas inverser les chiffres en écoutant le nombre.",
+  M10:"Rappel : compte le nombre de graduations entre les deux repères donnés.",
+  F1:"Rappel : relis le mot lettre par lettre pour vérifier chaque son."
+};
+function lessonHTML(id){
+  const l=LESSONS[id];
+  return l?'<br><span style="font-weight:400;color:var(--text-muted)">'+l+'</span>':'';
+}
 
 // ===================== GENERATEURS (aleatoires a chaque partie) =====================
 function randInt(min,max){return min+Math.floor(Math.random()*(max-min+1));}
@@ -864,33 +886,33 @@ const F7_BANK=[
 
 // ===================== HOME RENDER =====================
 const MATH_DOMAINS=[
-  {id:'M1',name:'Écriture des nombres'},
-  {id:'M2',name:'Décomposition additive'},
-  {id:'M3',name:'Ordre croissant'},
-  {id:'M4',name:'Additions posées'},
-  {id:'M5',name:'Soustractions posées'},
-  {id:'M6',name:'Problèmes'},
-  {id:'M7',name:'Tables d\'addition'},
-  {id:'M8',name:'Calcul rapide'},
-  {id:'M9',name:'Lecture des nombres'},
-  {id:'M10',name:'Droite graduée'},
+  {id:'M1',name:'Écriture des nombres',count:'10 questions'},
+  {id:'M2',name:'Décomposition additive',count:'8 questions'},
+  {id:'M3',name:'Ordre croissant',count:'8 séries'},
+  {id:'M4',name:'Additions posées',count:'8 questions'},
+  {id:'M5',name:'Soustractions posées',count:'8 questions'},
+  {id:'M6',name:'Problèmes',count:'8 questions'},
+  {id:'M7',name:'Tables d\'addition',count:'1 min chrono'},
+  {id:'M8',name:'Calcul rapide',count:'3 min chrono'},
+  {id:'M9',name:'Lecture des nombres',count:'10 questions'},
+  {id:'M10',name:'Droite graduée',count:'8 questions'},
 ];
 const FR_DOMAINS=[
-  {id:'F1',name:'Dictée'},
-  {id:'F2',name:'Le sujet'},
-  {id:'F3',name:'Le verbe'},
-  {id:'F4',name:'Classes de mots'},
-  {id:'F5',name:'Accord de l\'adjectif'},
-  {id:'F6',name:'Temps du verbe'},
-  {id:'F7',name:'Conjugaison'},
-  {id:'F8',name:'Fluence'},
+  {id:'F1',name:'Dictée',count:'10 mots'},
+  {id:'F2',name:'Le sujet',count:'8 questions'},
+  {id:'F3',name:'Le verbe',count:'8 questions'},
+  {id:'F4',name:'Classes de mots',count:'8 questions'},
+  {id:'F5',name:'Accord de l\'adjectif',count:'8 questions'},
+  {id:'F6',name:'Temps du verbe',count:'8 questions'},
+  {id:'F7',name:'Conjugaison',count:'8 questions'},
+  {id:'F8',name:'Fluence',count:'1 min chrono'},
 ];
 function cardHTML(d,color){
   const s=scores[d.id];
   let badge;
   if(!s)badge=`<span class="card-score score-todo">à faire</span>`;
   else badge=`<span class="card-score" style="background:${color}">${s.bon}/${s.total} ✓</span>`;
-  return `<div class="card" onclick="launch('${d.id}')"><div class="card-num">${d.id}</div><div class="card-name">${d.name}</div>${badge}</div>`;
+  return `<div class="card" onclick="launch('${d.id}')"><div class="card-num">${d.id}</div><div class="card-name">${d.name}</div><div style="font-size:11px;color:var(--text-muted)">${d.count}</div>${badge}</div>`;
 }
 function renderHome(){
   document.getElementById('math-grid').innerHTML=MATH_DOMAINS.map(d=>cardHTML(d,'var(--bleu)')).join('');
@@ -940,7 +962,7 @@ EXERCISES.M1=function(){
     if(val===it.n){
       fb.textContent='✓ Correct !';fb.className='input-feedback ok';bon++;
     }else{
-      fb.textContent='✗ La réponse était '+it.n;fb.className='input-feedback ko';
+      fb.innerHTML='✗ La réponse était '+it.n+lessonHTML('M1');fb.className='input-feedback ko';
     }
     inp.disabled=true;
     document.getElementById('m1-val').disabled=true;
@@ -1018,7 +1040,7 @@ EXERCISES.M3=function(){
     const correct=JSON.stringify(slotArr)===JSON.stringify(sorted);
     const fb=document.getElementById('ord-fb');
     if(correct){fb.textContent='✓ Correct !';fb.className='input-feedback ok';bon++;}
-    else{fb.textContent='✗ L\'ordre correct était : '+sorted.join(' < ');fb.className='input-feedback ko';}
+    else{fb.innerHTML='✗ L\'ordre correct était : '+sorted.join(' < ')+'<br><span style="font-weight:400">Rappel : compare les chiffres de gauche à droite.</span>';fb.className='input-feedback ko';}
     document.getElementById('val-ord').disabled=true;
     document.querySelectorAll('.token').forEach(t=>t.disabled=true);
     setTimeout(()=>{idx++;render();},1500);
@@ -1053,7 +1075,7 @@ EXERCISES.M4=function(){
     const it=items[idx];
     const fb=document.getElementById('op-fb');
     if(val===it.result){fb.textContent='✓ Correct !';fb.className='input-feedback ok';bon++;}
-    else{fb.textContent='✗ La réponse était '+it.result;fb.className='input-feedback ko';}
+    else{fb.innerHTML='✗ La réponse était '+it.result+'<br><span style="font-weight:400">Rappel : aligne les unités à droite, additionne colonne par colonne en n\'oubliant pas les retenues.</span>';fb.className='input-feedback ko';}
     document.getElementById('op-inp').disabled=true;
     document.querySelector('.validate-btn').disabled=true;
     setTimeout(()=>{idx++;render();},1200);
@@ -1089,7 +1111,7 @@ EXERCISES.M5=function(){
     const it=items[idx];
     const fb=document.getElementById('op-fb');
     if(val===it.result){fb.textContent='✓ Correct !';fb.className='input-feedback ok';bon++;}
-    else{fb.textContent='✗ La réponse était '+it.result;fb.className='input-feedback ko';}
+    else{fb.innerHTML='✗ La réponse était '+it.result+'<br><span style="font-weight:400">Rappel : aligne les unités à droite et n\'oublie pas de gérer les retenues (emprunts) lors de la soustraction.</span>';fb.className='input-feedback ko';}
     document.getElementById('op-inp').disabled=true;
     document.querySelector('.validate-btn').disabled=true;
     setTimeout(()=>{idx++;render();},1200);
@@ -1101,7 +1123,7 @@ EXERCISES.M5=function(){
 EXERCISES.M6=function(){
   const items=Array.from({length:8},()=>{
     const it=genM6();
-    return {q:it.q,choices:m6Choices(it),correct:String(it.r),expl:'Réponse : '+it.r+(it.u?' '+it.u:'')};
+    return {q:it.q,choices:m6Choices(it),correct:String(it.r),expl:'Réponse : '+it.r+(it.u?' '+it.u:'')+'. Repère les mots clés (« en tout », « il reste », « plus que ») pour choisir la bonne opération.'};
   });
   qcmScreen(items,i=>i.q,i=>i.choices.map(String),i=>i.correct,i=>i.expl,'#1B3FA0','M6');
 };
@@ -1316,8 +1338,13 @@ EXERCISES.M9=function(){
       b.disabled=true;
       if(parseInt(b.textContent)===correct)b.classList.add('correct');
     });
-    if(ans===correct){btn.classList.add('correct');bon++;}
-    else btn.classList.add('wrong');
+    const fb=document.getElementById('m9-fb');
+    if(ans===correct){
+      btn.classList.add('correct');bon++;
+    }else{
+      btn.classList.add('wrong');
+      fb.innerHTML='Rappel : attention à ne pas inverser les chiffres.';fb.className='input-feedback ko';
+    }
     setTimeout(()=>{idx++;render();},1200);
   };
   render();
@@ -1365,7 +1392,7 @@ EXERCISES.M10=function(){
     const it=items[idx];
     const fb=document.getElementById('m10-fb');
     if(val===it.val){fb.textContent='✓ Correct !';fb.className='input-feedback ok';bon++;}
-    else{fb.textContent='✗ La réponse était '+it.val;fb.className='input-feedback ko';}
+    else{fb.innerHTML='✗ La réponse était '+it.val+'<br><span style="font-weight:400">Rappel : compte le nombre de graduations entre les deux repères.</span>';fb.className='input-feedback ko';}
     document.getElementById('m10-inp').disabled=true;
     document.querySelector('.validate-btn').disabled=true;
     setTimeout(()=>{idx++;render();},1200);
@@ -1375,7 +1402,7 @@ EXERCISES.M10=function(){
 
 // F1 Dictée
 EXERCISES.F1=function(){
-  const items=pickN(F1_BANK,8);
+  const items=pickN(F1_BANK,10);
   let idx=0,bon=0;
   const body=document.getElementById('ex-body');
   function prog(){return `<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${Math.round(idx/items.length*100)}%;background:#C8311B"></div></div>`;}
@@ -1402,7 +1429,7 @@ EXERCISES.F1=function(){
     const it=items[idx];
     const fb=document.getElementById('f1-fb');
     if(val===it.mot.toLowerCase()){fb.textContent='✓ Correct !';fb.className='input-feedback ok';bon++;}
-    else{fb.textContent='✗ La réponse était : '+it.mot;fb.className='input-feedback ko';}
+    else{fb.innerHTML='✗ La réponse était : '+it.mot+'<br><span style="font-weight:400">Rappel : relis le mot lettre par lettre, en pensant aux sons difficiles.</span>';fb.className='input-feedback ko';}
     document.getElementById('f1-inp').disabled=true;
     document.querySelector('.validate-btn').disabled=true;
     document.getElementById('f1-play').disabled=true;

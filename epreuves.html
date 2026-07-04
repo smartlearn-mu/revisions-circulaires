@@ -66,6 +66,8 @@ input{font-family:inherit}
   background:var(--border);color:var(--text-muted);
 }
 .ep-card-score.done{background:var(--vert);color:#fff}
+.ep-card.ep-card-free{border-style:dashed;border-color:var(--vert);background:#f2fbf6}
+.ep-card.ep-card-free:hover{box-shadow:0 4px 16px rgba(45,156,92,.18)}
 
 /* EPREUVE */
 #ep-screen{display:none;padding-bottom:40px}
@@ -576,23 +578,68 @@ const F8_TEXTS=[
 
 function generateEpreuveData(){
   return {
-    m1:Array.from({length:4},genM1Num),
-    m2:Array.from({length:2},genM2),
-    m3:genM3(),
-    m4:Array.from({length:2},genM4),
-    m5:Array.from({length:2},genM5),
-    m6:Array.from({length:2},genM6),
-    m9:Array.from({length:3},genM9),
-    m10:Array.from({length:2},genM10),
-    f1:pickN(F1_BANK,3),
-    f2:pickN(F2_BANK,2),
-    f3:pickN(F3_BANK,2),
-    f4:pickN(F4_BANK,2),
-    f5:Array.from({length:2},genF5),
-    f6:pickN(F6_BANK,2),
-    f7:pickN(F7_EP_BANK,2),
+    m1:Array.from({length:10},genM1Num),
+    m2:Array.from({length:8},genM2),
+    m3:Array.from({length:8},genM3),
+    m4:Array.from({length:8},genM4),
+    m5:Array.from({length:8},genM5),
+    m6:Array.from({length:8},genM6),
+    m9:Array.from({length:10},genM9),
+    m10:Array.from({length:8},genM10),
+    f1:pickN(F1_BANK,10),
+    f2:pickN(F2_BANK,8),
+    f3:pickN(F3_BANK,8),
+    f4:pickN(F4_BANK,8),
+    f5:Array.from({length:8},genF5),
+    f6:pickN(F6_BANK,8),
+    f7:pickN(F7_EP_BANK,8),
     f8:F8_TEXTS[randInt(0,F8_TEXTS.length-1)]
   };
+}
+
+// Nombre d'items reellement generes par exercice (voir generateEpreuveData)
+const EX_ITEM_COUNTS={
+  "M1 · Écriture des nombres":"10 items",
+  "M2 · Décomposition additive":"8 items",
+  "M3 · Ordre croissant":"8 items (séries de 4 nombres)",
+  "M4 · Additions posées":"8 items",
+  "M5 · Soustractions posées":"8 items",
+  "M6 · Problèmes":"8 items",
+  "M7 · Tables d’addition (1 min)":"1 minute chrono",
+  "M8 · Calcul rapide (3 min)":"3 minutes chrono",
+  "M9 · Lecture des nombres":"10 items",
+  "M10 · Droite graduée":"8 items",
+  "F1 · Dictée de mots":"10 items",
+  "F2 · Le sujet":"8 items",
+  "F3 · Le verbe":"8 items",
+  "F4 · Classes de mots":"8 items",
+  "F5 · Accord de l’adjectif":"8 items",
+  "F6 · Temps du verbe":"8 items",
+  "F7 · Conjugaison":"8 items",
+  "F8 · Fluence (mots/min)":"1 minute chrono"
+};
+
+// Rappels pedagogiques affiches uniquement en cas d'echec
+const EP_LESSONS={
+  M1:"Rappel : attention à « soixante-dix », « quatre-vingts » et « quatre-vingt-un ».",
+  M2:"Rappel : centaines, dizaines et unités s'additionnent séparément (C×100 + D×10 + U).",
+  M3:"Rappel : compare les chiffres de gauche à droite pour ranger les nombres.",
+  M4:"Rappel : aligne les unités à droite et additionne colonne par colonne avec les retenues.",
+  M5:"Rappel : aligne les unités à droite et soustrais colonne par colonne en gérant les retenues.",
+  M6:"Rappel : repère les mots clés (« en tout », « il reste », « de plus que »…) pour choisir l'opération.",
+  M9:"Rappel : attention à ne pas inverser les chiffres en écoutant le nombre.",
+  M10:"Rappel : compte le nombre de graduations entre les deux repères donnés.",
+  F1:"Rappel : relis le mot lettre par lettre pour vérifier chaque son.",
+  F2:"Rappel : le sujet répond à la question « qui est-ce qui ? » ou « qu'est-ce qui ? ».",
+  F3:"Rappel : le verbe exprime l'action ou l'état dans la phrase.",
+  F4:"Rappel : distingue bien nom, adjectif, déterminant et nom propre selon leur rôle.",
+  F5:"Rappel : l'adjectif s'accorde en genre et en nombre avec le nom qu'il accompagne.",
+  F6:"Rappel : repère la terminaison du verbe pour identifier son temps.",
+  F7:"Rappel : accorde le verbe avec son sujet selon le temps demandé."
+};
+function lessonHTML(id){
+  const l=EP_LESSONS[id];
+  return l?"<br><span style=\"font-weight:400;color:var(--text-muted)\">"+l+"</span>":"";
 }
 
 // ===================== ETAT =====================
@@ -745,9 +792,10 @@ function startEpreuve(idx){
   el("som-title").textContent="Épreuve "+(idx+1);
   el("som-list").innerHTML=G_EXERCISES.map(function(ex,k){
     const fr=ex.label.indexOf("F")===0;
+    const count=EX_ITEM_COUNTS[ex.label]||"";
     return "<div class=\"som-item\" data-k=\""+k+"\" style=\"display:flex;align-items:center;gap:10px;padding:9px 12px;margin-bottom:5px;background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer\">"+
       "<span style=\"width:8px;height:8px;border-radius:50%;background:"+(fr?"var(--rouge)":"var(--bleu)")+";flex-shrink:0\"></span>"+
-      "<span style=\"font-size:14px\">"+(k+1)+". "+ex.label+"</span></div>";
+      "<span style=\"font-size:14px\">"+(k+1)+". "+ex.label+(count?" — "+count:"")+"</span></div>";
   }).join("");
   el("som-list").querySelectorAll(".som-item").forEach(function(item){
     item.addEventListener("click",function(){lancerExercices(parseInt(item.dataset.k));});
@@ -807,12 +855,15 @@ function showFinalScore(){
 
 // ===================== ACCUEIL =====================
 function renderHome(){
-  el("ep-grid").innerHTML=EPREUVES.map(function(ep,i){
+  const freeCard="<div class=\"ep-card ep-card-free\" id=\"ep-card-free\"><div class=\"ep-card-num\">ÉPREUVE 0</div><div class=\"ep-card-name\">Entraînement libre</div><div class=\"ep-card-desc\">18 domaines · choisis ce que tu veux travailler, sans chrono d'épreuve</div><span class=\"ep-card-score\">libre</span></div>";
+  const epCards=EPREUVES.map(function(ep,i){
     const s=EP_SCORES[i];
     const badge=s?"<span class=\"ep-card-score done\">"+s.bon+" / "+s.total+" ✓</span>":"<span class=\"ep-card-score\">à faire</span>";
     return "<div class=\"ep-card\" data-ep=\""+i+"\"><div class=\"ep-card-num\">ÉPREUVE "+(i+1)+"</div><div class=\"ep-card-name\">"+ep.name+"</div><div class=\"ep-card-desc\">18 exercices · "+ep.desc+"</div>"+badge+"</div>";
   }).join("");
-  el("ep-grid").querySelectorAll(".ep-card").forEach(function(c){
+  el("ep-grid").innerHTML=freeCard+epCards;
+  el("ep-card-free").addEventListener("click",function(){window.location.href="entrainement.html";});
+  el("ep-grid").querySelectorAll(".ep-card[data-ep]").forEach(function(c){
     c.addEventListener("click",function(){startEpreuve(parseInt(c.dataset.ep));});
   });
 }
@@ -824,7 +875,8 @@ function fbNextHTML(){
 // Feedback + bouton Suivant = SEUL chemin d'avancement (pas d'auto-avance)
 function showResult(ok,koMsg,onNext){
   const fb=el("fb");
-  fb.textContent=ok?"✓ Bravo !":"✗ "+koMsg;
+  if(ok){fb.textContent="✓ Bravo !";}
+  else{fb.innerHTML="✗ "+koMsg;}
   fb.className="input-feedback "+(ok?"ok":"ko");
   const nx=el("nx");
   nx.style.display="inline-block";
@@ -864,7 +916,7 @@ function exM1(nums){
       inp.disabled=true;el("pl").disabled=true;
       const ok=v===nums[idx];
       if(ok)bon++;
-      showResult(ok,"La réponse était "+nums[idx],function(){idx++;step();});
+      showResult(ok,"La réponse était "+nums[idx]+lessonHTML("M1"),function(){idx++;step();});
     }
     step();
   }};
@@ -896,62 +948,69 @@ function exM2(items){
       inp.disabled=true;
       const ok=v===items[idx].n;
       if(ok)bon++;
-      showResult(ok,"La réponse était "+items[idx].n,function(){idx++;step();});
+      showResult(ok,"La réponse était "+items[idx].n+lessonHTML("M2"),function(){idx++;step();});
     }
     step();
   }};
 }
 
 // --- M3 Ordre croissant (jetons -> slots) ---
-function exM3(nums4){
+function exM3(series){
   return {label:"M3 · Ordre croissant",run:function(body,done){
-    const tokens=shuf([...nums4]);
-    let slotArr=[null,null,null,null];
-    body.innerHTML="<div class=\"ex-label math\">Ordre croissant</div>"+
-      "<p class=\"ex-question\">Range ces nombres du plus petit au plus grand :</p>"+
-      "<div class=\"slots-row\">"+[0,1,2,3].map(function(i){return "<div class=\"slot\" data-slot=\""+i+"\"></div>";}).join("")+"</div>"+
-      "<div class=\"tokens-row\">"+tokens.map(function(t,i){return "<button class=\"token\" data-val=\""+t+"\">"+t+"</button>";}).join("")+"</div>"+
-      "<button class=\"clear-btn\" id=\"clr\">Effacer</button>"+
-      "<button class=\"val-ord-btn\" id=\"vo\">Valider ✓</button>"+
-      fbNextHTML();
-    const slots=body.querySelectorAll(".slot");
-    const toks=body.querySelectorAll(".token");
-    toks.forEach(function(t){
-      t.addEventListener("click",function(){
-        if(t.disabled)return;
-        const ns=slotArr.indexOf(null);
-        if(ns===-1)return;
-        const v=parseInt(t.dataset.val);
-        slotArr[ns]=v;
-        slots[ns].textContent=v;slots[ns].classList.add("filled");
-        t.disabled=true;t.classList.add("used");
-        if(slotArr.indexOf(null)===-1)el("vo").style.display="inline-block";
+    let idx=0,bon=0;
+    function step(){
+      if(idx>=series.length){done(bon,series.length);return;}
+      const nums4=series[idx];
+      const tokens=shuf([...nums4]);
+      let slotArr=[null,null,null,null];
+      body.innerHTML="<div class=\"ex-label math\">Ordre croissant — "+(idx+1)+"/"+series.length+"</div>"+
+        "<p class=\"ex-question\">Range ces nombres du plus petit au plus grand :</p>"+
+        "<div class=\"slots-row\">"+[0,1,2,3].map(function(i){return "<div class=\"slot\" data-slot=\""+i+"\"></div>";}).join("")+"</div>"+
+        "<div class=\"tokens-row\">"+tokens.map(function(t,i){return "<button class=\"token\" data-val=\""+t+"\">"+t+"</button>";}).join("")+"</div>"+
+        "<button class=\"clear-btn\" id=\"clr\">Effacer</button>"+
+        "<button class=\"val-ord-btn\" id=\"vo\">Valider ✓</button>"+
+        fbNextHTML();
+      const slots=body.querySelectorAll(".slot");
+      const toks=body.querySelectorAll(".token");
+      toks.forEach(function(t){
+        t.addEventListener("click",function(){
+          if(t.disabled)return;
+          const ns=slotArr.indexOf(null);
+          if(ns===-1)return;
+          const v=parseInt(t.dataset.val);
+          slotArr[ns]=v;
+          slots[ns].textContent=v;slots[ns].classList.add("filled");
+          t.disabled=true;t.classList.add("used");
+          if(slotArr.indexOf(null)===-1)el("vo").style.display="inline-block";
+        });
       });
-    });
-    slots.forEach(function(s,si){
-      s.addEventListener("click",function(){
-        if(slotArr[si]===null||el("vo").disabled)return;
-        const v=slotArr[si];
-        for(const t of toks){if(parseInt(t.dataset.val)===v&&t.disabled){t.disabled=false;t.classList.remove("used");break;}}
-        slotArr[si]=null;s.textContent="";s.classList.remove("filled");
-        el("vo").style.display="none";
+      slots.forEach(function(s,si){
+        s.addEventListener("click",function(){
+          if(slotArr[si]===null||el("vo").disabled)return;
+          const v=slotArr[si];
+          for(const t of toks){if(parseInt(t.dataset.val)===v&&t.disabled){t.disabled=false;t.classList.remove("used");break;}}
+          slotArr[si]=null;s.textContent="";s.classList.remove("filled");
+          el("vo").style.display="none";
+        });
       });
-    });
-    el("clr").addEventListener("click",function(){
-      if(el("vo").disabled)return;
-      slotArr=[null,null,null,null];
-      slots.forEach(function(s){s.textContent="";s.classList.remove("filled");});
-      toks.forEach(function(t){t.disabled=false;t.classList.remove("used");});
-      el("vo").style.display="none";el("fb").textContent="";
-    });
-    el("vo").addEventListener("click",function(){
-      if(el("vo").disabled)return;
-      el("vo").disabled=true;el("clr").disabled=true;
-      toks.forEach(function(t){t.disabled=true;});
-      const sorted=[...nums4].sort(function(a,b){return a-b;});
-      const ok=JSON.stringify(slotArr)===JSON.stringify(sorted);
-      showResult(ok,"L’ordre correct était : "+sorted.join(" < "),function(){done(ok?1:0,1);});
-    });
+      el("clr").addEventListener("click",function(){
+        if(el("vo").disabled)return;
+        slotArr=[null,null,null,null];
+        slots.forEach(function(s){s.textContent="";s.classList.remove("filled");});
+        toks.forEach(function(t){t.disabled=false;t.classList.remove("used");});
+        el("vo").style.display="none";el("fb").textContent="";
+      });
+      el("vo").addEventListener("click",function(){
+        if(el("vo").disabled)return;
+        el("vo").disabled=true;el("clr").disabled=true;
+        toks.forEach(function(t){t.disabled=true;});
+        const sorted=[...nums4].sort(function(a,b){return a-b;});
+        const ok=JSON.stringify(slotArr)===JSON.stringify(sorted);
+        if(ok)bon++;
+        showResult(ok,"L’ordre correct était : "+sorted.join(" < ")+lessonHTML("M3"),function(){idx++;step();});
+      });
+    }
+    step();
   }};
 }
 
@@ -982,7 +1041,7 @@ function exM4(items){
       inp.disabled=true;
       const ok=v===items[idx].result;
       if(ok)bon++;
-      showResult(ok,"La réponse était "+items[idx].result,function(){idx++;step();});
+      showResult(ok,"La réponse était "+items[idx].result+lessonHTML("M4"),function(){idx++;step();});
     }
     step();
   }};
@@ -1014,7 +1073,7 @@ function exM5(items){
       inp.disabled=true;
       const ok=v===items[idx].result;
       if(ok)bon++;
-      showResult(ok,"La réponse était "+items[idx].result,function(){idx++;step();});
+      showResult(ok,"La réponse était "+items[idx].result+lessonHTML("M5"),function(){idx++;step();});
     }
     step();
   }};
@@ -1042,7 +1101,7 @@ function exM6(items){
       const it=items[idx];
       const ok=v===it.r;
       if(ok)bon++;
-      showResult(ok,"La réponse était "+it.r+(it.u?" "+it.u:""),function(){idx++;step();});
+      showResult(ok,"La réponse était "+it.r+(it.u?" "+it.u:"")+lessonHTML("M6"),function(){idx++;step();});
     }
     step();
   }};
@@ -1153,7 +1212,7 @@ function exM9(items){
           if(!ok)b.classList.add("wrong");
           if(ok)bon++;
           el("pl").disabled=true;
-          showResult(ok,"C’était "+it.n,function(){idx++;step();});
+          showResult(ok,"C’était "+it.n+lessonHTML("M9"),function(){idx++;step();});
         });
       });
       setTimeout(play,400);
@@ -1202,7 +1261,7 @@ function exM10(items){
       inp.disabled=true;
       const ok=v===items[idx].val;
       if(ok)bon++;
-      showResult(ok,"La réponse était "+items[idx].val,function(){idx++;step();});
+      showResult(ok,"La réponse était "+items[idx].val+lessonHTML("M10"),function(){idx++;step();});
     }
     step();
   }};
@@ -1237,7 +1296,7 @@ function exF1(items){
       inp.disabled=true;el("pl").disabled=true;
       const ok=v===items[idx].m.toLowerCase();
       if(ok)bon++;
-      showResult(ok,"La réponse était : "+items[idx].m,function(){idx++;step();});
+      showResult(ok,"La réponse était : "+items[idx].m+lessonHTML("F1"),function(){idx++;step();});
     }
     step();
   }};
@@ -1281,7 +1340,8 @@ function exClickWords(items,label,shortName,question,answerKey,answerName){
         expected.forEach(function(i){btns[i].classList.add("correct");});
         sel.forEach(function(i){if(expected.indexOf(i)===-1)btns[i].classList.add("wrong");});
         if(ok)bon++;
-        showResult(ok,answerName+" : "+expected.map(function(i){return it.w[i];}).join(" "),function(){idx++;step();});
+        const lessonId=answerKey==="s"?"F2":"F3";
+        showResult(ok,answerName+" : "+expected.map(function(i){return it.w[i];}).join(" ")+lessonHTML(lessonId),function(){idx++;step();});
       });
     }
     step();
@@ -1316,7 +1376,8 @@ function exChoice(items,label,shortName,question,options,getS,getC,fmtOpt){
           const ok=b.dataset.o===getC(it);
           if(!ok)b.classList.add("wrong");
           if(ok)bon++;
-          showResult(ok,"C’était : "+getC(it),function(){idx++;step();});
+          const lessonId=/^([MF]\d+)/.exec(label)[1];
+          showResult(ok,"C’était : "+getC(it)+lessonHTML(lessonId),function(){idx++;step();});
         });
         row.appendChild(b);
       });
@@ -1358,7 +1419,7 @@ function exF5(items){
       inp.disabled=true;
       const ok=v===items[idx].exp.toLowerCase();
       if(ok)bon++;
-      showResult(ok,"La réponse était : "+items[idx].exp,function(){idx++;step();});
+      showResult(ok,"La réponse était : "+items[idx].exp+lessonHTML("F5"),function(){idx++;step();});
     }
     step();
   }};
@@ -1385,7 +1446,7 @@ function exF7(items){
       inp.disabled=true;
       const ok=v===items[idx].exp.toLowerCase();
       if(ok)bon++;
-      showResult(ok,"La réponse était : "+items[idx].exp,function(){idx++;step();});
+      showResult(ok,"La réponse était : "+items[idx].exp+lessonHTML("F7"),function(){idx++;step();});
     }
     step();
   }};
