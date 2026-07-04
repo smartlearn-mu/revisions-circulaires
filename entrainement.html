@@ -37,6 +37,8 @@ input{font-family:inherit}
 #header-text .brand{color:#fff;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:3px}
 #header-text .sub{color:#999;font-size:11px;letter-spacing:4px;margin-top:2px}
 #header-shapes{display:flex;align-items:center;gap:8px}
+#header-shapes a{color:#ccc;font-size:12px;font-weight:600;text-decoration:none;border:1px solid #555;border-radius:4px;padding:5px 10px;white-space:nowrap}
+#header-shapes a:hover{background:#333;color:#fff}
 #header-back-btn{
   display:none;
   background:transparent;border:1px solid #555;color:#fff;
@@ -246,10 +248,10 @@ input{font-family:inherit}
     </div>
     <span id="header-domain-title"></span>
   </div>
-  <div id="header-shapes" style="display:flex;align-items:center;gap:10px">
-    <a href="index.html" style="color:#ccc;font-size:12px;font-weight:600;text-decoration:none;border:1px solid #555;border-radius:4px;padding:5px 10px;white-space:nowrap;" onmouseover="this.style.background='#333';this.style.color='#fff'" onmouseout="this.style.background='';this.style.color='#ccc'">🏠 Niveaux</a>
-    <a href="epreuves.html" style="color:#ccc;font-size:12px;font-weight:600;text-decoration:none;border:1px solid #555;border-radius:4px;padding:5px 10px;white-space:nowrap;" onmouseover="this.style.background='#333';this.style.color='#fff'" onmouseout="this.style.background='';this.style.color='#ccc'">Épreuves →</a>
-    <a href="#" onclick="showProgressScreen();return false;" style="color:#ccc;font-size:12px;font-weight:600;text-decoration:none;border:1px solid #555;border-radius:4px;padding:5px 10px;white-space:nowrap;" onmouseover="this.style.background='#333';this.style.color='#fff'" onmouseout="this.style.background='';this.style.color='#ccc'">📊 Mes progrès</a>
+  <div id="header-shapes">
+    <a href="index.html">🏠 Accueil</a>
+    <a href="epreuves.html">Épreuves</a>
+    <a href="#" onclick="showProgressScreen();return false;">📊 Mes progrès</a>
     <svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="#1B3FA0"/></svg>
     <svg width="13" height="13" viewBox="0 0 13 13"><rect width="13" height="13" fill="#C8311B"/></svg>
     <svg width="14" height="12" viewBox="0 0 14 12"><polygon points="7,0 14,12 0,12" fill="#F2C12E"/></svg>
