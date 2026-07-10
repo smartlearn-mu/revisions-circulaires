@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Space Learning — Sixième</title>
+<script data-goatcounter="https://space-learning.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<style>
+:root {
+  --noir:#1A1A1A;
+  --rouge:#C8311B;
+  --bleu:#1B3FA0;
+  --jaune:#F2C12E;
+  --vert:#2D9C5C;
+  --surface-1:#F7F5F0;
+  --surface-2:#fff;
+  --border:#E3E0D8;
+  --border-strong:#BBB;
+  --text-primary:#1A1A1A;
+  --text-muted:#777;
+  --radius:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:system-ui,-apple-system,sans-serif;background:#FDFCF9;color:var(--text-primary)}
+button{cursor:pointer;font-family:inherit}
+input{font-family:inherit}
+
+/* HEADER */
+#app-header{
+  position:sticky;top:0;z-index:100;
+  background:var(--noir);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 20px;
+  gap:12px;
+}
+#header-left{display:flex;align-items:center;gap:12px}
+#header-text .brand{color:#fff;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:3px}
+#header-text .sub{color:#999;font-size:11px;letter-spacing:4px;margin-top:2px}
+#header-shapes{display:flex;align-items:center;gap:8px}
+#header-shapes a{color:#ccc;font-size:12px;font-weight:600;text-decoration:none;border:1px solid #555;border-radius:4px;padding:5px 10px;white-space:nowrap}
+#header-shapes a:hover{background:#333;color:#fff}
+#header-back-btn{
+  display:none;
+  background:transparent;border:1px solid #555;color:#fff;
+  padding:6px 14px;border-radius:4px;font-size:13px;
+  margin-right:8px;
+}
+#header-back-btn:hover{background:#333}
+#header-domain-title{color:#fff;font-size:14px;font-weight:600;display:none}
+
+/* BANDEAU */
+#domain-band{height:3px;display:none}
+
+/* MAIN */
+#main{padding:24px 16px;max-width:800px;margin:0 auto}
+
+/* ACCUEIL */
+.section-title{
+  display:flex;align-items:center;gap:10px;
+  font-size:18px;font-weight:700;margin-bottom:16px;margin-top:28px;
+}
+.section-title:first-child{margin-top:0}
+.section-badge{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:11px;font-weight:700;flex-shrink:0;
+}
+.cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:420px){.cards-grid{grid-template-columns:1fr}}
+.card{
+  background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:14px;
+  cursor:pointer;transition:box-shadow .15s,transform .1s;
+  display:flex;flex-direction:column;gap:6px;
+  position:relative;
+}
+.card:hover{box-shadow:0 4px 12px rgba(0,0,0,.1);transform:translateY(-1px)}
+.card-num{font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:1px}
+.card-name{font-size:14px;font-weight:600;line-height:1.3}
+.card-score{
+  font-size:11px;font-weight:600;
+  padding:2px 8px;border-radius:12px;color:#fff;
+  align-self:flex-start;margin-top:2px;
+}
+.score-todo{background:var(--border-strong);color:var(--text-muted)}
+
+/* ECRAN EXERCICE */
+#exercise-screen{display:none;padding:0 0 40px}
+.ex-title{font-size:20px;font-weight:700;margin-bottom:20px;padding:0 16px}
+.ex-body{padding:0 16px}
+
+/* QCM */
+.qcm-question{font-size:16px;font-weight:600;margin-bottom:20px;line-height:1.5}
+.qcm-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+@media(max-width:380px){.qcm-choices{grid-template-columns:1fr}}
+.qcm-btn{
+  background:var(--surface-1);border:2px solid var(--border);
+  border-radius:var(--radius);padding:12px 10px;
+  font-size:15px;text-align:center;transition:all .15s;
+}
+.qcm-btn:hover:not(:disabled){border-color:var(--border-strong);background:#fff}
+.qcm-btn.correct{background:#e8f7ee;border-color:var(--vert);color:var(--vert)}
+.qcm-btn.wrong{background:#fdecea;border-color:var(--rouge);color:var(--rouge)}
+.qcm-btn:disabled{cursor:default}
+.feedback-box{
+  background:var(--surface-1);border:1px solid var(--border);
+  border-radius:var(--radius);padding:12px 14px;
+  font-size:14px;line-height:1.5;margin-bottom:16px;display:none;
+}
+.next-btn{
+  background:var(--noir);color:#fff;border:none;
+  padding:12px 24px;border-radius:var(--radius);
+  font-size:15px;font-weight:600;display:none;
+}
+.next-btn:hover{opacity:.85}
+
+/* PROGRESS */
+.progress-bar-wrap{background:var(--border);border-radius:4px;height:6px;margin-bottom:20px}
+.progress-bar-fill{height:6px;border-radius:4px;transition:width .3s}
+
+/* SCORE SCREEN */
+#score-screen{display:none;padding:40px 16px;max-width:420px;margin:0 auto;text-align:center}
+.score-big{font-size:72px;font-weight:900;line-height:1}
+.score-label{font-size:16px;color:var(--text-muted);margin:8px 0 20px}
+.score-bar-wrap{background:var(--border);border-radius:6px;height:12px;margin-bottom:20px}
+.score-bar-fill{height:12px;border-radius:6px}
+.score-msg{font-size:18px;font-weight:700;margin-bottom:24px}
+.back-home-btn{
+  background:var(--noir);color:#fff;border:none;
+  padding:14px 32px;border-radius:var(--radius);
+  font-size:16px;font-weight:600;
+}
+.back-home-btn:hover{opacity:.85}
+
+/* DICTEE */
+.dictee-hint{font-size:13px;color:var(--text-muted);margin-bottom:8px}
+.play-btn{
+  background:var(--surface-1);border:1px solid var(--border-strong);
+  border-radius:var(--radius);padding:8px 18px;font-size:14px;margin-bottom:12px;
+}
+.play-btn:hover{background:var(--border)}
+.text-input{
+  width:100%;border:2px solid var(--border);border-radius:var(--radius);
+  padding:10px 12px;font-size:18px;margin-bottom:10px;
+}
+.text-input:focus{outline:none;border-color:var(--bleu)}
+.validate-btn{
+  background:var(--bleu);color:#fff;border:none;
+  padding:10px 24px;border-radius:var(--radius);font-size:15px;font-weight:600;
+}
+.validate-btn:hover{opacity:.85}
+.input-feedback{font-size:14px;margin-top:8px;font-weight:600}
+.input-feedback.ok{color:var(--vert)}
+.input-feedback.ko{color:var(--rouge)}
+
+/* DROITE GRADUEE */
+.grad-svg{display:block;width:100%;max-width:500px;margin-bottom:20px}
+
+/* MINI TEXTE */
+.mini-text{
+  font-size:15px;line-height:1.6;background:var(--surface-1);
+  border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px 16px;margin-bottom:18px;
+}
+</style>
+</head>
+<body>
+
+<header id="app-header">
+  <div id="header-left">
+    <button id="header-back-btn" onclick="goHome()">← Retour</button>
+    <svg id="logo-svg" width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="20" cy="20" r="6" fill="#F2C12E"/>
+      <ellipse cx="20" cy="20" rx="18" ry="7" fill="none" stroke="#1B3FA0" stroke-width="2"/>
+      <ellipse cx="20" cy="20" rx="18" ry="7" fill="none" stroke="#1B3FA0" stroke-width="2" transform="rotate(60 20 20)"/>
+      <ellipse cx="20" cy="20" rx="18" ry="7" fill="none" stroke="#1B3FA0" stroke-width="2" transform="rotate(-60 20 20)"/>
+      <circle cx="38" cy="20" r="2.5" fill="#C8311B"/>
+      <circle cx="29" cy="5.3" r="2.5" fill="#F2C12E"/>
+      <circle cx="11" cy="34.7" r="2.5" fill="#2D9C5C"/>
+    </svg>
+    <div id="header-text">
+      <div class="brand">Space Learning</div>
+      <div class="sub">Sixième · 2025</div>
+    </div>
+    <span id="header-domain-title"></span>
+  </div>
+  <div id="header-shapes">
+    <a href="../index.html">🏠 Accueil</a>
+    <a href="epreuves.html">Épreuves</a>
+    <a href="#" onclick="showProgressScreen();return false;">📊 Mes progrès</a>
+    <svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="#1B3FA0"/></svg>
+    <svg width="13" height="13" viewBox="0 0 13 13"><rect width="13" height="13" fill="#C8311B"/></svg>
+    <svg width="14" height="12" viewBox="0 0 14 12"><polygon points="7,0 14,12 0,12" fill="#F2C12E"/></svg>
+  </div>
+</header>
+<div id="domain-band"></div>
+
+<div id="main">
+  <!-- ACCUEIL -->
+  <div id="home-screen">
+    <div class="section-title">
+      <span class="section-badge" style="background:var(--bleu)">A</span>
+      Mathématiques
+    </div>
+    <div class="cards-grid" id="math-grid"></div>
+    <div class="section-title" style="margin-top:32px">
+      <span class="section-badge" style="background:var(--rouge)">V</span>
+      Vocabulaire
+    </div>
+    <div class="cards-grid" id="voc-grid"></div>
+  </div>
+
+  <!-- EXERCICE -->
+  <div id="exercise-screen">
+    <div class="ex-body" id="ex-body"></div>
+  </div>
+
+  <!-- SCORE -->
+  <div id="score-screen">
+    <div class="score-big" id="sc-big"></div>
+    <div class="score-label" id="sc-label"></div>
+    <div class="score-bar-wrap"><div class="score-bar-fill" id="sc-bar"></div></div>
+    <div class="score-msg" id="sc-msg"></div>
+    <button class="back-home-btn" onclick="goHome()">← Retour à l'accueil</button>
+  </div>
+
+  <!-- PROGRES -->
+  <div id="progress-screen" style="display:none;padding:24px 16px 40px;max-width:900px;margin:0 auto">
+    <button id="header-back-btn2" onclick="goHome()" style="background:transparent;border:1px solid var(--border-strong);color:var(--text-primary);padding:6px 14px;border-radius:4px;font-size:13px;margin-bottom:16px">← Retour</button>
+    <div class="section-title" style="margin-top:0">📊 Mes progrès</div>
+    <div id="progress-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:28px"></div>
+    <div class="section-title">✅ Points forts</div>
+    <div id="progress-strengths" style="margin-bottom:28px"></div>
+    <div class="section-title">🎯 À travailler en priorité</div>
+    <div id="progress-weaknesses" style="margin-bottom:28px"></div>
+    <button class="back-home-btn" onclick="resetProgressHistory()">Réinitialiser mon historique</button>
+  </div>
+</div>
+
+<script>
+// ===================== UTILS =====================
+function shuf(a){
+  const b=[...a];
+  for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}
+  return b;
+}
+function tts(txt,rate,cb){
+  if(!window.speechSynthesis)return cb&&cb();
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(txt);
+  u.lang='fr-FR';u.rate=rate||1;
+  if(cb)u.onend=cb;
+  speechSynthesis.speak(u);
+}
+function clearTimer(){
+  if(window._exTimer){clearInterval(window._exTimer);window._exTimer=null;}
+}
+function navigate(el,title,color){
+  clearTimer();
+  speechSynthesis.cancel();
+  document.getElementById('home-screen').style.display='none';
+  document.getElementById('score-screen').style.display='none';
+  document.getElementById('progress-screen').style.display='none';
+  document.getElementById('exercise-screen').style.display='block';
+  document.getElementById('header-back-btn').style.display='inline-block';
+  document.getElementById('header-domain-title').style.display='block';
+  document.getElementById('header-domain-title').textContent=title;
+  document.getElementById('logo-svg').style.display='none';
+  document.getElementById('header-text').style.display='none';
+  const band=document.getElementById('domain-band');
+  band.style.display='block';band.style.background=color;
+  document.getElementById('ex-body').innerHTML='';
+  el();
+}
+function goHome(){
+  clearTimer();
+  speechSynthesis.cancel();
+  document.getElementById('home-screen').style.display='block';
+  document.getElementById('exercise-screen').style.display='none';
+  document.getElementById('score-screen').style.display='none';
+  document.getElementById('progress-screen').style.display='none';
+  document.getElementById('header-back-btn').style.display='none';
+  document.getElementById('header-domain-title').style.display='none';
+  document.getElementById('logo-svg').style.display='';
+  document.getElementById('header-text').style.display='';
+  document.getElementById('domain-band').style.display='none';
+  renderHome();
+}
+
+// ===================== SCORES =====================
+const scores={};
+function saveScore(id,bon,total){
+  scores[id]={bon,total};
+  saveAttempt(id,bon,total,'entrainement');
+}
+
+// ===================== PROGRESSION (localStorage) =====================
+const PROGRESS_KEY='spaceLearningProgress_6e';
+function saveAttempt(domaine,bon,total,source){
+  try{
+    let data;
+    try{data=JSON.parse(localStorage.getItem(PROGRESS_KEY))||{attempts:[]};}
+    catch(e){data={attempts:[]};}
+    if(!Array.isArray(data.attempts))data.attempts=[];
+    data.attempts.push({ts:Date.now(),domaine,bon,total,source});
+    localStorage.setItem(PROGRESS_KEY,JSON.stringify(data));
+  }catch(e){/* localStorage indisponible : on ignore silencieusement */}
+}
+function loadProgressData(){
+  try{
+    const data=JSON.parse(localStorage.getItem(PROGRESS_KEY))||{attempts:[]};
+    if(!Array.isArray(data.attempts))data.attempts=[];
+    return data;
+  }catch(e){return{attempts:[]};}
+}
+function domainStats(id){
+  const data=loadProgressData();
+  const list=data.attempts.filter(a=>a.domaine===id).sort((a,b)=>a.ts-b.ts);
+  if(list.length===0)return{count:0,pct:0,trend:'none'};
+  let sb=0,st=0;
+  list.forEach(a=>{sb+=a.bon;st+=a.total;});
+  const pct=st>0?Math.round(sb/st*100):0;
+  let trend='none';
+  if(list.length>=2){
+    const recent=list.slice(-3);
+    const prev=list.slice(-6,-3);
+    if(recent.length>=1&&prev.length>=1){
+      const avg=arr=>{let b=0,t=0;arr.forEach(a=>{b+=a.bon;t+=a.total;});return t>0?(b/t*100):0;};
+      const rAvg=avg(recent),pAvg=avg(prev);
+      if(rAvg-pAvg>3)trend='up';
+      else if(pAvg-rAvg>3)trend='down';
+      else trend='stable';
+    }
+  }
+  return{count:list.length,pct,trend};
+}
+function trendArrow(trend){
+  if(trend==='up')return'<span style="color:var(--vert)">↗</span>';
+  if(trend==='down')return'<span style="color:var(--rouge)">↘</span>';
+  if(trend==='stable')return'<span style="color:var(--text-muted)">→</span>';
+  return'<span style="color:var(--border-strong)">—</span>';
+}
+function badgeColor(count,pct){
+  if(count===0)return'var(--border-strong)';
+  if(pct>=80)return'var(--vert)';
+  if(pct>=50)return'var(--jaune)';
+  return'var(--rouge)';
+}
+function allDomainsList(){
+  return MATH_DOMAINS.map(d=>({id:d.id,name:d.name,color:'var(--bleu)'}))
+    .concat(VOC_DOMAINS.map(d=>({id:d.id,name:d.name,color:'var(--rouge)'})));
+}
+function showProgressScreen(){
+  clearTimer();
+  speechSynthesis.cancel();
+  document.getElementById('home-screen').style.display='none';
+  document.getElementById('exercise-screen').style.display='none';
+  document.getElementById('score-screen').style.display='none';
+  document.getElementById('header-back-btn').style.display='none';
+  document.getElementById('header-domain-title').style.display='none';
+  document.getElementById('domain-band').style.display='none';
+  document.getElementById('progress-screen').style.display='block';
+  renderProgressScreen();
+}
+function renderProgressScreen(){
+  const domains=allDomainsList();
+  const grid=document.getElementById('progress-grid');
+  grid.innerHTML=domains.map(d=>{
+    const s=domainStats(d.id);
+    const bg=badgeColor(s.count,s.pct);
+    return `<div class="card" style="cursor:default">
+      <div class="card-num" style="color:${d.color}">${d.id}</div>
+      <div class="card-name">${d.name}</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+        <span class="card-score" style="background:${bg}">${s.count>0?s.pct+'%':'—'}</span>
+        <span style="font-size:12px;color:var(--text-muted)">${s.count} tentative${s.count>1?'s':''}</span>
+        ${trendArrow(s.trend)}
+      </div>
+    </div>`;
+  }).join('');
+
+  const withStats=domains.map(d=>({...d,...domainStats(d.id)}));
+  const strong=withStats.filter(d=>d.count>=2&&d.pct>=80).sort((a,b)=>b.pct-a.pct);
+  const weak=withStats.filter(d=>d.count>=1&&d.pct<50).sort((a,b)=>(b.count-a.count)||(a.pct-b.pct));
+
+  const strEl=document.getElementById('progress-strengths');
+  if(strong.length===0){
+    strEl.innerHTML='<p style="color:var(--text-muted);font-size:14px">Pas encore de points forts identifiés — continue à t\'entraîner !</p>';
+  }else{
+    strEl.innerHTML='<div class="cards-grid">'+strong.map(d=>`<div class="card"><div class="card-num" style="color:${d.color}">${d.id}</div><div class="card-name">${d.name}</div><span class="card-score" style="background:var(--vert)">${d.pct}%</span></div>`).join('')+'</div>';
+  }
+  const weakEl=document.getElementById('progress-weaknesses');
+  if(weak.length===0){
+    weakEl.innerHTML='<p style="color:var(--text-muted);font-size:14px">Rien à signaler pour l\'instant, bravo !</p>';
+  }else{
+    weakEl.innerHTML='<div class="cards-grid">'+weak.map(d=>`<div class="card"><div class="card-num" style="color:${d.color}">${d.id}</div><div class="card-name">${d.name}</div><span class="card-score" style="background:var(--rouge)">${d.pct}%</span></div>`).join('')+'</div>';
+  }
+}
+function resetProgressHistory(){
+  const ok=confirm("Es-tu sûr de vouloir effacer tout ton historique de progression ? Cette action est irréversible.");
+  if(!ok)return;
+  try{localStorage.setItem(PROGRESS_KEY,JSON.stringify({attempts:[]}));}catch(e){}
+  renderProgressScreen();
+}
+
+// ===================== SCORE SCREEN =====================
+function showScore(bon,total,color){
+  clearTimer();
+  speechSynthesis.cancel();
+  document.getElementById('exercise-screen').style.display='none';
+  document.getElementById('score-screen').style.display='block';
+  const pct=total>0?Math.round(bon/total*100):0;
+  document.getElementById('sc-big').textContent=bon;
+  document.getElementById('sc-big').style.color=color;
+  document.getElementById('sc-label').textContent='bonne'+(bon>1?'s':'')+' réponse'+(bon>1?'s':'')+' sur '+total;
+  const bar=document.getElementById('sc-bar');
+  bar.style.width=pct+'%';bar.style.background=color;
+  let msg='Continue !';
+  if(pct>=90)msg='Excellent !';
+  else if(pct>=70)msg='Bien !';
+  else if(pct>=50)msg='En progrès !';
+  document.getElementById('sc-msg').textContent=msg;
+}
+
+// ===================== QCM GENERIQUE (clic sur proposition) =====================
+function qcmScreen(items,getQ,getChoices,getCorrect,getExpl,color,domId){
+  const body=document.getElementById('ex-body');
+  let idx=0,bon=0;
+  const shuffled=shuf(items);
+
+  function progBar(){
+    return `<div class="progress-bar-wrap"><div class="progress-bar-fill" id="qcm-prog" style="width:${Math.round(idx/shuffled.length*100)}%;background:${color}"></div></div>`;
+  }
+
+  function render(){
+    if(idx>=shuffled.length){saveScore(domId,bon,shuffled.length);showScore(bon,shuffled.length,color);return;}
+    const item=shuffled[idx];
+    const q=getQ(item);
+    const choices=shuf(getChoices(item));
+    const correct=getCorrect(item);
+    const expl=getExpl(item);
+    body.innerHTML=progBar()+
+      `<p class="qcm-question">${q}</p>
+      <div class="qcm-choices" id="qcm-choices">${choices.map(c=>`<button class="qcm-btn" onclick="qcmAns(this,'${esc(c)}','${esc(correct)}')">${c}</button>`).join('')}</div>
+      <div class="feedback-box" id="fb" data-expl="${escAttr(expl)}"></div>
+      <button class="next-btn" id="nxt" onclick="qcmNext()">Suivant →</button>`;
+  }
+  window.qcmAns=function(btn,ans,correct){
+    const all=document.querySelectorAll('.qcm-btn');
+    all.forEach(b=>{b.disabled=true;if(b.textContent===correct)b.classList.add('correct');});
+    const fb=document.getElementById('fb');
+    if(ans===correct){
+      btn.classList.add('correct');bon++;
+    }else{
+      btn.classList.add('wrong');
+      fb.innerHTML=fb.getAttribute('data-expl');
+      fb.style.display='block';
+    }
+    document.getElementById('nxt').style.display='inline-block';
+  };
+  window.qcmNext=function(){idx++;render();};
+  render();
+}
+function esc(s){return String(s).replace(/'/g,"\\'");}
+function escAttr(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ===================== SAISIE GENERIQUE (input libre) =====================
+function inputScreen(items,cfg){
+  let idx=0,bon=0;
+  const body=document.getElementById('ex-body');
+  function prog(){return `<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${Math.round(idx/items.length*100)}%;background:${cfg.color}"></div></div>`;}
+  function render(){
+    if(idx>=items.length){saveScore(cfg.domId,bon,items.length);showScore(bon,items.length,cfg.color);return;}
+    const it=items[idx];
+    const qHtml=cfg.getQ(it);
+    const ttsBtn=cfg.tts?`<button class="play-btn" id="in-play" onclick="inPlay()">▶ Écouter</button><br>`:'';
+    body.innerHTML=prog()+
+      `<p class="qcm-question">${qHtml}</p>
+      ${ttsBtn}
+      <input class="text-input" type="${cfg.inputType||'text'}" id="in-inp" style="max-width:${cfg.inputWidth||220}px" placeholder="${cfg.placeholder||''}">
+      <div class="input-feedback" id="in-fb"></div>
+      <button class="validate-btn" style="margin-top:8px" onclick="inVal()">Valider</button>`;
+    if(cfg.tts)setTimeout(()=>window.inPlay(),400);
+    const inp=document.getElementById('in-inp');
+    inp.focus();
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')inVal();});
+  }
+  window.inPlay=function(){
+    const it=items[idx];
+    const w=cfg.tts(it);
+    tts(w,0.9,()=>setTimeout(()=>tts(w,0.9),400));
+  };
+  window.inVal=function(){
+    const raw=document.getElementById('in-inp').value;
+    const it=items[idx];
+    const ok=cfg.check(raw,it);
+    const fb=document.getElementById('in-fb');
+    if(ok){fb.textContent='✓ Correct !';fb.className='input-feedback ok';bon++;}
+    else{fb.innerHTML='✗ La réponse était '+cfg.correctText(it)+lessonHTML(cfg.domId);fb.className='input-feedback ko';}
+    document.getElementById('in-inp').disabled=true;
+    document.querySelector('.validate-btn').disabled=true;
+    if(cfg.tts){const p=document.getElementById('in-play');if(p)p.disabled=true;}
+    setTimeout(()=>{idx++;render();},1300);
+  };
+  render();
+}
+
+// Rappels pedagogiques affiches uniquement en cas d'echec (jamais en cas de reussite)
+const LESSONS={
+  A1:"Rappel : découpe le nombre par tranches de 3 chiffres en partant de la droite (unités, milliers, millions).",
+  A2:"Rappel : un dixième = 0,1 ; un centième = 0,01 ; un millième = 0,001.",
+  A3:"Rappel : compte le nombre de graduations entre les deux repères donnés pour trouver le pas.",
+  A4:"Rappel : compare les chiffres un par un, en partant de la gauche (ou du chiffre après la virgule).",
+  A5:"Rappel : multiplier par 10 déplace la virgule d'un rang vers la droite ; la moitié, c'est diviser par 2.",
+  A6:"Rappel : périmètre = somme des côtés ; aire = L×l ; volume d'un pavé = L×l×h.",
+  A7:"Rappel : 1 m = 100 cm = 1000 mm ; 1 kg = 1000 g ; 1 L = 100 cL.",
+  A8:"Rappel : un angle aigu est plus petit que 90°, un angle droit vaut 90°, un angle obtus est entre 90° et 180°.",
+  P1:"Rappel : identifie les données utiles, choisis la bonne opération, puis vérifie ton résultat.",
+  V1:"Rappel : un préfixe se place avant le mot et un suffixe après ; ils changent ou précisent le sens.",
+  V2:"Rappel : les mots d'une même famille partagent un radical commun lié au même sens de base.",
+  V3:"Rappel : pour trouver le sens d'un mot ou d'une expression, aide-toi du contexte de la phrase.",
+  V4:"Rappel : relis le texte attentivement et cherche les indices qui répondent précisément à la question."
+};
+function lessonHTML(id){
+  const l=LESSONS[id];
+  return l?'<br><span style="font-weight:400;color:var(--text-muted)">'+l+'</span>':'';
+}
+
+// ===================== HELPERS NUMERIQUES =====================
+function randInt(min,max){return min+Math.floor(Math.random()*(max-min+1));}
+function pickN(arr,n){return shuf(arr).slice(0,n);}
+function round2(x){return Math.round(x*100)/100;}
+function fmtNum(x){return String(x).replace('.',',');}
+function parseNum(s){
+  if(typeof s!=='string')return NaN;
+  return parseFloat(s.trim().replace(',', '.').replace(/\s/g,''));
+}
+function numEq(a,b){return !isNaN(a)&&Math.abs(a-b)<0.02;}
+
+// numToFr etendu (grands nombres, jusqu'aux millions)
+function numToFr(n){
+  if(n===0)return'zéro';
+  const units=['','un','deux','trois','quatre','cinq','six','sept','huit','neuf',
+    'dix','onze','douze','treize','quatorze','quinze','seize','dix-sept','dix-huit','dix-neuf'];
+  const tens=['','dix','vingt','trente','quarante','cinquante','soixante','soixante','quatre-vingts','quatre-vingt'];
+  function below100(n){
+    if(n<20)return units[n];
+    const t=Math.floor(n/10);const u=n%10;
+    if(t===7){
+      if(u===1)return'soixante et onze';
+      return'soixante-'+units[10+u];
+    }
+    if(t===8){
+      if(u===0)return'quatre-vingts';
+      return'quatre-vingt-'+units[u];
+    }
+    if(t===9)return'quatre-vingt-'+units[10+u];
+    if(u===0)return tens[t];
+    if(u===1)return tens[t]+' et un';
+    return tens[t]+'-'+units[u];
+  }
+  function below1000(n){
+    if(n<100)return below100(n);
+    const c=Math.floor(n/100);const r=n%100;
+    let s='';
+    if(c===1)s='cent';
+    else s=units[c]+' cent'+(r===0&&c>1?'s':'');
+    if(r===0)return s;
+    return s+' '+below100(r);
+  }
+  function below1000000(n){
+    if(n<1000)return below1000(n);
+    const q=Math.floor(n/1000),r=n%1000;
+    let s=q===1?'mille':below1000(q)+' mille';
+    if(r>0)s+=' '+below1000(r);
+    return s;
+  }
+  if(n<1000000)return below1000000(n);
+  const q=Math.floor(n/1000000),r=n%1000000;
+  let s=q===1?'un million':below1000(q)+' millions';
+  if(r>0)s+=' '+below1000000(r);
+  return s;
+}
+
+// ===================== GENERATEURS (aleatoires a chaque partie) =====================
+
+// --- A1 : grand nombre (5 a 7 chiffres) dicte au TTS ---
+function genA1(){
+  const n=randInt(10000,9999999);
+  return {n,w:numToFr(n)};
+}
+
+// --- A2 : fractions et decimaux ---
+function genA2(){
+  const type=randInt(0,2);
+  if(type===0){
+    const denoms=[10,100,1000];
+    const denom=denoms[randInt(0,2)];
+    const num=randInt(1,denom-1);
+    const word=denom===10?'dixièmes':denom===100?'centièmes':'millièmes';
+    return {q:`Écris sous forme décimale : ${num} ${word}`,ans:round2(num/denom)};
+  }else if(type===1){
+    const a=randInt(1,25);
+    const b=randInt(1,9);
+    return {q:`Calcule : ${a} + ${b}/10 =`,ans:round2(a+b/10)};
+  }else{
+    const num=randInt(1,99);
+    return {q:`Écris sous forme décimale la fraction ${num}/100`,ans:round2(num/100)};
+  }
+}
+
+// --- A3 : droite graduee (grands nombres et decimaux) ---
+const A3_CONFIGS=[[0,100000,10000],[0,1000000,100000],[2000000,2600000,100000],[0,1000,100],[0,10,1],[0,5,0.5]];
+function genA3(){
+  const cfg=A3_CONFIGS[randInt(0,A3_CONFIGS.length-1)];
+  const min=cfg[0],max=cfg[1],step=cfg[2];
+  const steps=Math.round((max-min)/step);
+  const k=randInt(1,steps-1);
+  const val=round2(min+k*step);
+  return {min,max,step,val};
+}
+
+// --- A4 : comparaison / encadrement ---
+function genA4(){
+  const type=randInt(0,1);
+  if(type===0){
+    const set=new Set();
+    while(set.size<4){
+      const v=round2(randInt(100,300)/100+randInt(0,99)/1000);
+      set.add(v);
+    }
+    const arr=[...set];
+    const askMin=Math.random()<0.5;
+    const target=askMin?Math.min(...arr):Math.max(...arr);
+    return {q:`Clique sur le nombre le ${askMin?'plus petit':'plus grand'} :`,choices:arr.map(fmtNum),correct:fmtNum(target),expl:`Compare les chiffres après la virgule un par un : la bonne réponse est ${fmtNum(target)}.`};
+  }else{
+    const lo=randInt(10000,50000);
+    const hi=lo+randInt(20000,80000);
+    const inRange=randInt(lo+1,hi-1);
+    const d1=lo-randInt(100,5000);
+    const d2=hi+randInt(100,5000);
+    const d3=hi+randInt(6000,50000);
+    const choices=shuf([inRange,d1,d2,d3]).map(String);
+    return {q:`Quel nombre est compris entre ${lo} et ${hi} ?`,choices,correct:String(inRange),expl:`${inRange} est bien compris entre ${lo} et ${hi}.`};
+  }
+}
+
+// --- A5 : calcul mental ---
+function genA5(){
+  const type=randInt(0,3);
+  if(type===0){
+    const n=round2(randInt(100,99999)/100);
+    return {q:`Calcule : ${fmtNum(n)} × 10 =`,ans:round2(n*10)};
+  }else if(type===1){
+    const n=round2(randInt(10,9999)/100);
+    return {q:`Calcule : ${fmtNum(n)} × 100 =`,ans:round2(n*100)};
+  }else if(type===2){
+    const half=round2(randInt(50,999)/100);
+    const n=round2(half*2);
+    return {q:`Calcule la moitié de ${fmtNum(n)} =`,ans:half};
+  }else{
+    const a=round2(randInt(11,99)/10);
+    const b=randInt(2,9);
+    return {q:`Calcule : ${fmtNum(a)} × ${b} =`,ans:round2(a*b)};
+  }
+}
+
+// --- A6 : perimetre / aire / volume ---
+function genA6(){
+  const type=randInt(0,2);
+  if(type===0){
+    const L=randInt(5,40),l=randInt(2,L-1);
+    return {q:`Un rectangle mesure ${L} cm de longueur et ${l} cm de largeur. Quel est son périmètre (en cm) ?`,ans:2*(L+l),unit:'cm'};
+  }else if(type===1){
+    const L=randInt(4,20),l=randInt(2,L-1);
+    return {q:`Un rectangle mesure ${L} cm de longueur et ${l} cm de largeur. Quelle est son aire (en cm²) ?`,ans:L*l,unit:'cm²'};
+  }else{
+    const L=randInt(2,10),l=randInt(2,8),h=randInt(2,6);
+    return {q:`Un pavé droit mesure ${L} cm de longueur, ${l} cm de largeur et ${h} cm de hauteur. Quel est son volume (en cm³) ?`,ans:L*l*h,unit:'cm³'};
+  }
+}
+
+// --- A7 : conversions d'unites ---
+const A7_TEMPLATES=[
+  function(){const cm=randInt(2,95);return{q:`Convertis ${cm} cm en mm.`,ans:cm*10};},
+  function(){const m=randInt(1,9),cm=randInt(0,99);return{q:`Convertis ${m} m et ${cm} cm en cm.`,ans:m*100+cm};},
+  function(){const g=randInt(100,4900);return{q:`Convertis ${g} g en kg (nombre décimal).`,ans:round2(g/1000)};},
+  function(){const kg=round2(randInt(10,90)/10);return{q:`Convertis ${fmtNum(kg)} kg en g.`,ans:Math.round(kg*1000)};},
+  function(){const cl=randInt(10,990);return{q:`Convertis ${cl} cL en L (nombre décimal).`,ans:round2(cl/100)};},
+  function(){const L=round2(randInt(1,90)/10);return{q:`Convertis ${fmtNum(L)} L en cL.`,ans:Math.round(L*100)};}
+];
+function genA7(){return A7_TEMPLATES[randInt(0,A7_TEMPLATES.length-1)]();}
+
+// --- A8 : comparaison d'angles / grandeurs (clic) ---
+function genA8(){
+  const type=randInt(0,1);
+  if(type===0){
+    const deg=randInt(10,175);
+    let correct;
+    if(deg<90)correct='angle aigu';
+    else if(deg===90)correct='angle droit';
+    else correct='angle obtus';
+    const choices=['angle aigu','angle droit','angle obtus','angle plat'];
+    return {q:`Un angle mesure ${deg}°. Comment s'appelle ce type d'angle ?`,choices,correct,expl:`Un angle de ${deg}° est un ${correct} (aigu < 90° ; droit = 90° ; obtus entre 90° et 180°).`};
+  }else{
+    const units=[{n:'m',f:100},{n:'dm',f:10},{n:'cm',f:1}];
+    const u1=units[randInt(0,2)],u2=units[randInt(0,2)];
+    const v1=randInt(2,50),v2=randInt(2,50);
+    const mm1=v1*u1.f,mm2=v2*u2.f;
+    const s1=`${v1} ${u1.n}`,s2=`${v2} ${u2.n}`;
+    const correct=mm1===mm2?s1:(mm1>mm2?s1:s2);
+    return {q:`Quelle est la plus grande longueur ?`,choices:[s1,s2],correct,expl:`${s1} et ${s2} converties dans la même unité permettent de comparer : la plus grande est ${correct}.`};
+  }
+}
+
+// --- P1 : problemes (au moins 8 gabarits) ---
+const P1_TEMPLATES=[
+  function(){
+    const n=randInt(5,25),c=round2(randInt(20,150)/100);
+    return {q:`Un pack contient ${n} bouteilles de ${fmtNum(c)} L chacune. Quelle quantité totale d'eau (en L) contient le pack ?`,ans:round2(n*c)};
+  },
+  function(){
+    const pC=round2(randInt(80,200)/100),nC=randInt(2,5),pP=round2(randInt(100,300)/100);
+    const total=round2(pC*nC+pP);
+    const paid=[10,20,50].find(function(b){return b>total;})||50;
+    return {q:`Tu achètes ${nC} croissants à ${fmtNum(pC)} € pièce et un pain à ${fmtNum(pP)} €. Tu payes avec un billet de ${paid} €. Combien te rend-on (en €) ?`,ans:round2(paid-total)};
+  },
+  function(){
+    const p=round2(randInt(11,30)/10),a=randInt(4,12),b=randInt(1,a-1);
+    const totalA=round2(p*a);
+    return {q:`${a} croissants coûtent ${fmtNum(totalA)} € au total. Combien coûtent ${b} croissants (au même prix unitaire, en €) ?`,ans:round2(p*b)};
+  },
+  function(){
+    const add=randInt(3,15),x=randInt(1,20),target=(x+add)*2;
+    return {q:`Je choisis un nombre. Si j'ajoute ${add}, j'obtiens la moitié de ${target}. Quel est ce nombre ?`,ans:x};
+  },
+  function(){
+    const baseE=randInt(2,6),baseP=randInt(2,8),factor=randInt(2,4);
+    return {q:`Une recette utilise ${baseE} œufs pour ${baseP} personnes. Combien d'œufs faut-il pour ${baseP*factor} personnes (au même dosage) ?`,ans:baseE*factor};
+  },
+  function(){
+    const nA=randInt(3,6),nB=randInt(2,5);
+    return {q:`Tu as ${nA} écharpes différentes et ${nB} paires de gants différentes. Combien d'assortiments écharpe-gants différents peux-tu former ?`,ans:nA*nB};
+  },
+  function(){
+    const speed=randInt(40,120),minutes=[15,20,30,45][randInt(0,3)];
+    const dist=round2(speed*minutes/60);
+    return {q:`Une voiture roule à ${speed} km/h. Quelle distance parcourt-elle en ${minutes} minutes (en km) ?`,ans:dist};
+  },
+  function(){
+    const km=randInt(2,20),cmMap=randInt(2,8);
+    return {q:`Sur une carte, 1 cm représente ${km} km. Quelle distance réelle (en km) correspond à ${cmMap} cm sur la carte ?`,ans:km*cmMap};
+  },
+  function(){
+    const per=randInt(100,900)*2,L=randInt(60,Math.floor(per/2)-10);
+    const l=per/2-L;
+    return {q:`Un terrain rectangulaire a un périmètre de ${per} m et une longueur de ${L} m. Quelle est sa largeur (en m) ?`,ans:l};
+  }
+];
+function genP1(){return P1_TEMPLATES[randInt(0,P1_TEMPLATES.length-1)]();}
+
+// ===================== BANQUES VOCABULAIRE (~20-25 items) =====================
+const V1_BANK=[
+  {q:"Trouve l'intrus dans cette famille de mots avec le préfixe « mal- » : malade, malheureux, malhabile, mallette.",choices:['malade','malheureux','malhabile','mallette'],correct:'mallette',expl:'« mallette » n\'est pas construit avec le préfixe « mal- » (idée de mal), c\'est un simple diminutif de « malle ».'},
+  {q:"Trouve l'intrus : refaire, retour, relire, redire.",choices:['refaire','retour','relire','redire'],correct:'retour',expl:'« retour » n\'a pas le préfixe « re- » avec le sens de répétition, contrairement aux autres.'},
+  {q:"Le suffixe « -able » dans « mangeable » signifie que la chose…",choices:['peut être mangée','a été mangée','ne se mange jamais','sert à manger'],correct:'peut être mangée',expl:'Le suffixe « -able » exprime une possibilité : ce qui peut être fait.'},
+  {q:"Quel mot est formé comme « vendeur » (base verbale + -eur) ?",choices:['joueur','couleur','chaleur','moteur'],correct:'joueur',expl:'« joueur » = jouer + -eur, comme « vendeur » = vendre + -eur.'},
+  {q:"Trouve l'intrus : impossible, imprudent, image, impatient.",choices:['impossible','imprudent','image','impatient'],correct:'image',expl:'« image » ne contient pas le préfixe négatif « im- », contrairement aux autres.'},
+  {q:"Le préfixe « dé- » dans « défaire » indique…",choices:["l'action contraire de faire",'une répétition','une petite quantité','une intensité'],correct:"l'action contraire de faire",expl:'« dé- » exprime souvent le contraire ou l\'annulation d\'une action.'},
+  {q:"Trouve l'intrus : gentillesse, tristesse, richesse, adresse.",choices:['gentillesse','tristesse','richesse','adresse'],correct:'adresse',expl:'« adresse » n\'est pas formé avec le suffixe « -esse » exprimant une qualité, comme les autres.'},
+  {q:"Le suffixe « -eux » dans « courageux » exprime…",choices:['une qualité, une caractéristique','un métier','un lieu','une action'],correct:'une qualité, une caractéristique',expl:'Le suffixe « -eux » forme des adjectifs de qualité à partir d\'un nom.'},
+  {q:"Trouve l'intrus : boulanger, jardinier, pommier, cuisinier.",choices:['boulanger','jardinier','pommier','cuisinier'],correct:'pommier',expl:'« pommier » désigne un arbre, pas un métier, contrairement aux autres mots en « -ier/-er ».'},
+  {q:"Le préfixe « pré- » dans « prévoir » signifie…",choices:['avant','après','contre','avec'],correct:'avant',expl:'« pré- » indique une action réalisée avant une autre.'},
+  {q:"Trouve l'intrus : lisible, visible, possible, table.",choices:['lisible','visible','possible','table'],correct:'table',expl:'« table » ne contient pas le suffixe « -ible/-able » de possibilité.'},
+  {q:"Le suffixe « -tion » dans « décoration » transforme un verbe en…",choices:['nom','adjectif','adverbe','préposition'],correct:'nom',expl:'Le suffixe « -tion » forme des noms à partir de verbes (décorer → décoration).'},
+  {q:"Trouve l'intrus : anormal, antivol, antigel, anti-âge.",choices:['anormal','antivol','antigel','anti-âge'],correct:'anormal',expl:'« anormal » a le préfixe « a- » et non « anti- » (contre).'},
+  {q:"Le préfixe « sur- » dans « surcharger » indique…",choices:['un excès','un manque','une répétition','un contraire'],correct:'un excès',expl:'« sur- » exprime souvent un excès ou une position au-dessus.'},
+  {q:"Trouve l'intrus : chanteur, danseur, docteur, coiffeur.",choices:['chanteur','danseur','docteur','coiffeur'],correct:'docteur',expl:'« docteur » ne vient pas d\'un verbe français en -er suivi de -eur, contrairement aux autres.'},
+  {q:"Le suffixe « -ette » dans « fillette » indique…",choices:['une petite taille','un grand nombre','une couleur','un métier'],correct:'une petite taille',expl:'Le suffixe « -ette » est un diminutif indiquant la petitesse.'},
+  {q:"Trouve l'intrus : incapable, inutile, inconnu, innocent.",choices:['incapable','inutile','inconnu','innocent'],correct:'innocent',expl:'« innocent » n\'est pas construit avec le préfixe négatif « in- », ce n\'est pas le contraire de « nocent ».'},
+  {q:"Le préfixe « co- » dans « coéquipier » signifie…",choices:['ensemble, avec','avant','contre','au-dessus'],correct:'ensemble, avec',expl:'« co- » exprime l\'idée d\'accompagnement ou de partage.'},
+  {q:"Trouve l'intrus : rapidement, lentement, vraiment, comment.",choices:['rapidement','lentement','vraiment','comment'],correct:'comment',expl:'« comment » n\'est pas un adverbe formé avec le suffixe « -ment ».'},
+  {q:"Le suffixe « -age » dans « lavage » transforme le verbe « laver » en…",choices:['nom désignant une action','adjectif','verbe conjugué','adverbe'],correct:'nom désignant une action',expl:'Le suffixe « -age » forme souvent des noms d\'action à partir d\'un verbe.'},
+  {q:"Trouve l'intrus : illisible, illégal, illustration, illogique.",choices:['illisible','illégal','illustration','illogique'],correct:'illustration',expl:'« illustration » n\'a pas le préfixe négatif « il- », contrairement aux autres.'},
+  {q:"Le préfixe « bi- » dans « bicyclette » indique…",choices:['deux','trois','un seul','plusieurs'],correct:'deux',expl:'« bi- » signifie « deux » (bicyclette = deux roues).'}
+];
+const V2_BANK=[
+  {q:"Trouve le mot de la même famille que « manuel » (parmi la liste) qui rappelle l'idée de « main ».",choices:['manucure','manteau','manège','manière'],correct:'manucure',expl:'« manucure » vient du latin « manus » (la main), comme « manuel ».'},
+  {q:"Quel mot appartient à la même famille que « terre » ?",choices:['terrain','terrible','terminer','terrasser'],correct:'terrain',expl:'« terrain » partage le radical « terr- » lié à la terre.'},
+  {q:"Quel mot appartient à la même famille que « dent » ?",choices:['dentiste','dense','dentelle','descendre'],correct:'dentiste',expl:'« dentiste » vient du radical « dent- », comme « dent ».'},
+  {q:"Quel mot appartient à la même famille que « lait » ?",choices:['laitier','laine','laisser','large'],correct:'laitier',expl:'« laitier » partage le radical « lait- ».'},
+  {q:"Trouve la famille de « permissive » : de quel verbe vient cet adjectif ?",choices:['permettre','permuter','perdre','persister'],correct:'permettre',expl:'« permissive » vient du verbe « permettre » (autoriser).'},
+  {q:"Quel mot appartient à la même famille que « fleur » ?",choices:['fleuriste','flou','fleuve','flèche'],correct:'fleuriste',expl:'« fleuriste » partage le radical « fleur- ».'},
+  {q:"Quel mot appartient à la même famille que « chant » ?",choices:['chanteur','champ','chance','changer'],correct:'chanteur',expl:'« chanteur » vient du radical « chant- », comme « chant ».'},
+  {q:"Quel mot appartient à la même famille que « mer » ?",choices:['maritime','mercredi','mérite','maire'],correct:'maritime',expl:'« maritime » vient du latin « mare » (la mer), comme « mer ».'},
+  {q:"Quel mot appartient à la même famille que « lumière » ?",choices:['lumineux','lumbago','luge','lueur'],correct:'lumineux',expl:'« lumineux » partage le radical « lumi- » lié à la lumière.'},
+  {q:"Quel mot appartient à la même famille que « boulanger » ?",choices:['boulangerie','boule','boulon','boucle'],correct:'boulangerie',expl:'« boulangerie » partage le radical « boulang- ».'},
+  {q:"Quel mot appartient à la même famille que « nation » ?",choices:['national','natation','nature','naviguer'],correct:'national',expl:'« national » partage le radical « nation- ».'},
+  {q:"Quel mot appartient à la même famille que « vue » (voir) ?",choices:['visible','vitesse','village','vivre'],correct:'visible',expl:'« visible » vient du radical latin lié à « voir », comme « vue ».'},
+  {q:"Quel mot appartient à la même famille que « courage » ?",choices:['courageux','courrier','courber','couronne'],correct:'courageux',expl:'« courageux » partage le radical « courag- ».'},
+  {q:"Quel mot appartient à la même famille que « feuille » ?",choices:['feuillage','fauteuil','famille','fable'],correct:'feuillage',expl:'« feuillage » partage le radical « feuill- ».'},
+  {q:"Quel mot appartient à la même famille que « juger » ?",choices:['jugement','jumeau','jungle','jouer'],correct:'jugement',expl:'« jugement » partage le radical « jug- », comme « juger ».'},
+  {q:"Quel mot appartient à la même famille que « eau » ?",choices:['aquatique','écouter','écrire','étage'],correct:'aquatique',expl:'« aquatique » vient du latin « aqua » (l\'eau), même famille de sens que « eau ».'},
+  {q:"Quel mot appartient à la même famille que « école » ?",choices:['scolaire','écouter','écolo','écoute'],correct:'scolaire',expl:'« scolaire » partage le radical latin lié à « école ».'},
+  {q:"Quel mot appartient à la même famille que « signal » ?",choices:['signer','simple','singe','sirène'],correct:'signer',expl:'« signer » partage le radical « sign- », comme « signal ».'},
+  {q:"Quel mot appartient à la même famille que « ami » ?",choices:['amical','amande','amorce','ample'],correct:'amical',expl:'« amical » partage le radical « amic/ami- ».'},
+  {q:"Quel mot appartient à la même famille que « or » (le métal) ?",choices:['doré','orage','ordre','oreille'],correct:'doré',expl:'« doré » (couleur de l\'or) partage le sens et le radical avec « or ».'},
+  {q:"Quel mot appartient à la même famille que « peur » ?",choices:['peureux','pêcheur','perle','perdu'],correct:'peureux',expl:'« peureux » partage le radical « peur- ».'}
+];
+const V3_BANK=[
+  {q:"Que signifie l'expression « ne pas être dans son assiette » ?",choices:['être un peu malade','avoir faim','être en retard','avoir tort'],correct:'être un peu malade',expl:'« Ne pas être dans son assiette » signifie se sentir un peu mal, fatigué ou souffrant.'},
+  {q:"Dans la phrase « Ce gâteau est succulent », le mot « succulent » signifie…",choices:['délicieux','très sucré','froid','difficile à digérer'],correct:'délicieux',expl:'« succulent » est un synonyme de « délicieux, savoureux ».'},
+  {q:"Dans la phrase « Le juge a rendu sa peine », le mot « peine » signifie ici…",choices:['une sanction, une condamnation','un chagrin','un effort','une justesse'],correct:'une sanction, une condamnation',expl:'Dans le contexte judiciaire, « peine » désigne la sanction prononcée par un juge.'},
+  {q:"Dans la phrase « Il a eu de la peine en apprenant la nouvelle », le mot « peine » signifie ici…",choices:['un chagrin','une sanction','un effort physique','une distance'],correct:'un chagrin',expl:'Ici, « peine » désigne une tristesse, un chagrin.'},
+  {q:"Dans la phrase « Il arrive à peine à finir son repas », le mot « peine » signifie ici…",choices:['tout juste, difficilement','un chagrin','une punition','beaucoup'],correct:'tout juste, difficilement',expl:'« à peine » signifie ici « tout juste, avec difficulté ».'},
+  {q:"Dans la phrase « Elle donne son avis sans hésiter », le verbe « donner » signifie ici…",choices:['exprimer, formuler','offrir un objet','remettre de l\'argent','vendre'],correct:'exprimer, formuler',expl:'Ici « donner son avis » signifie l\'exprimer, le formuler.'},
+  {q:"Que signifie l'expression « avoir le cœur sur la main » ?",choices:['être très généreux','être malade du cœur','être timide','être rapide'],correct:'être très généreux',expl:'Cette expression signifie être très généreux, donner facilement.'},
+  {q:"Que signifie l'expression « casser les pieds à quelqu'un » ?",choices:['l\'ennuyer, l\'importuner','le blesser physiquement','lui faire un cadeau','le féliciter'],correct:'l\'ennuyer, l\'importuner',expl:'Cette expression familière signifie ennuyer ou importuner quelqu\'un.'},
+  {q:"Dans la phrase « Le texte évoque un lieu mystérieux », le verbe « évoquer » signifie…",choices:['parler de, faire référence à','critiquer','ignorer','interdire'],correct:'parler de, faire référence à',expl:'« évoquer » signifie faire référence à quelque chose, en parler.'},
+  {q:"Que signifie l'expression « avoir la tête dans les nuages » ?",choices:['être distrait, rêveur','avoir le vertige','être très grand','être en colère'],correct:'être distrait, rêveur',expl:'Cette expression désigne quelqu\'un de rêveur, peu attentif.'},
+  {q:"Dans la phrase « Cette chronique dure depuis des années », le mot « chronique » (du grec chronos = temps) signifie…",choices:['qui dure longtemps','qui est rapide','qui est amusant','qui est terminé'],correct:'qui dure longtemps',expl:'« chronique » vient du grec « chronos » (le temps) et désigne ce qui s\'étend sur une longue durée.'},
+  {q:"Dans la phrase « Un synonyme est un mot qui a le même sens qu'un autre », le mot « synonyme » signifie…",choices:['mot de sens proche ou identique','mot de sens opposé','mot rare','mot difficile'],correct:'mot de sens proche ou identique',expl:'Un synonyme est un mot dont le sens est très proche d\'un autre mot.'},
+  {q:"Que signifie l'expression « mettre la charrue avant les bœufs » ?",choices:['faire les choses dans le mauvais ordre','travailler dans un champ','être en retard','se dépêcher'],correct:'faire les choses dans le mauvais ordre',expl:'Cette expression signifie agir de manière désordonnée, sans respecter l\'ordre logique.'},
+  {q:"Dans la phrase « Il a fait preuve de patience », l'expression « faire preuve de » signifie…",choices:['montrer, manifester','prouver par écrit','refuser','cacher'],correct:'montrer, manifester',expl:'« faire preuve de » signifie montrer une qualité par son comportement.'},
+  {q:"Que signifie l'expression « poser un lapin à quelqu'un » ?",choices:['ne pas venir à un rendez-vous','offrir un animal','faire une blague','se cacher'],correct:'ne pas venir à un rendez-vous',expl:'Cette expression signifie ne pas se présenter à un rendez-vous prévu.'},
+  {q:"Dans la phrase « Le texte se déroule dans une bibliothèque silencieuse », où se passe la scène ?",choices:['dans une bibliothèque','dans une école','dans un magasin','dans un jardin'],correct:'dans une bibliothèque',expl:'Le texte indique clairement le lieu : une bibliothèque.'},
+  {q:"Dans la phrase « Le futur proche annonce ce qui va bientôt arriver », le thème lexical de « futur, prochain, prévoir, bientôt » est…",choices:["l'avenir",'le passé','la nature','le sport'],correct:"l'avenir",expl:'Tous ces mots renvoient au thème de l\'avenir, du temps à venir.'},
+  {q:"Dans la phrase « Il a réussi à peine à temps », l'expression « à temps » signifie…",choices:['juste avant la limite','en retard','trop tôt','jamais'],correct:'juste avant la limite',expl:'« à temps » signifie que l\'action a eu lieu juste avant la limite fixée.'},
+  {q:"Que signifie l'expression « avoir un chat dans la gorge » ?",choices:['avoir la voix enrouée','avoir peur','avoir faim','être enrhumé du nez'],correct:'avoir la voix enrouée',expl:'Cette expression signifie que la voix est enrouée, difficile à utiliser.'},
+  {q:"Dans la phrase « L'auteur reformule son idée autrement », le verbe « reformuler » signifie…",choices:['exprimer autrement, redire différemment','inventer','effacer','traduire'],correct:'exprimer autrement, redire différemment',expl:'« reformuler » signifie exprimer une idée d\'une autre manière.'}
+];
+const V4_BANK=[
+  {text:"Léa entre dans la grande salle silencieuse, entourée de rayonnages remplis de livres. Elle chuchote pour ne pas déranger les autres lecteurs installés aux tables.",q:'Où se trouve Léa ?',choices:['Dans une bibliothèque','Dans un magasin','Dans une cuisine','Dans un stade'],correct:'Dans une bibliothèque',expl:'Les indices (rayonnages, livres, silence, lecteurs) désignent une bibliothèque.'},
+  {text:"Le ciel s'assombrit soudain, un grondement lointain se fait entendre et de grosses gouttes commencent à tomber sur le toit de la maison.",q:'Quel phénomène météorologique est décrit ?',choices:['Un orage','Une tempête de neige','Une canicule','Un tremblement de terre'],correct:'Un orage',expl:'Le ciel sombre, le grondement (tonnerre) et la pluie décrivent un orage.'},
+  {text:"Après trois heures d'entraînement intensif, les athlètes s'effondrent sur les bancs, épuisés, le souffle court, incapables de prononcer un mot.",q:'Comment se sentent les athlètes ?',choices:['Épuisés','Joyeux','En colère','Impatients'],correct:'Épuisés',expl:'Le texte insiste sur la fatigue extrême (s\'effondrent, souffle court).'},
+  {text:"Le vieux marin racontait ses voyages avec des étoiles dans les yeux, décrivant des tempêtes affrontées et des îles lointaines jamais oubliées.",q:'Que ressent le marin en racontant ses histoires ?',choices:['De la nostalgie et de l\'émerveillement','De la peur','De l\'ennui','De la colère'],correct:'De la nostalgie et de l\'émerveillement',expl:'« des étoiles dans les yeux » évoque l\'émerveillement et la nostalgie.'},
+  {text:"Le boulanger se lève chaque matin à quatre heures pour pétrir la pâte, allumer le four et préparer les baguettes avant l'ouverture de sa boutique.",q:'Quel est le métier décrit dans ce texte ?',choices:['Boulanger','Fermier','Professeur','Pêcheur'],correct:'Boulanger',expl:'Les indices (pétrir la pâte, four, baguettes) désignent le métier de boulanger.'},
+  {text:"Sur la carte au trésor, une croix rouge indiquait l'emplacement exact, non loin d'un rocher en forme de tête de dragon.",q:'Que représente la croix rouge sur la carte ?',choices:['L\'emplacement du trésor','Un chemin dangereux','Une ville','Une rivière'],correct:'L\'emplacement du trésor',expl:'Le texte précise que la croix indique l\'emplacement exact du trésor.'},
+  {text:"Malgré la fatigue du voyage, les explorateurs continuaient à avancer, portés par l'espoir de découvrir enfin la cité perdue.",q:'Qu\'est-ce qui pousse les explorateurs à continuer ?',choices:['L\'espoir de découvrir la cité perdue','La peur d\'un animal','Le froid','La faim'],correct:'L\'espoir de découvrir la cité perdue',expl:'Le texte indique clairement leur motivation : l\'espoir de la découverte.'},
+  {text:"Le professeur explique patiemment la même leçon pour la troisième fois, sans jamais hausser le ton, attentif à chaque élève en difficulté.",q:'Quelle qualité du professeur est mise en avant ?',choices:['La patience','La sévérité','La distraction','La rapidité'],correct:'La patience',expl:'Le texte insiste sur le fait qu\'il explique calmement plusieurs fois, sans se fâcher.'}
+];
+
+// ===================== HOME RENDER =====================
+const MATH_DOMAINS=[
+  {id:'A1',name:'Écriture des grands nombres',count:'6 items'},
+  {id:'A2',name:'Fractions et décimaux',count:'6 items'},
+  {id:'A3',name:'Droite graduée',count:'6 items'},
+  {id:'A4',name:'Comparaison et encadrement',count:'6 items'},
+  {id:'A5',name:'Calcul mental',count:'6 items'},
+  {id:'A6',name:'Périmètre, aire, volume',count:'6 items'},
+  {id:'A7',name:"Conversions d'unités",count:'6 items'},
+  {id:'A8',name:'Angles et grandeurs',count:'6 items'},
+  {id:'P1',name:'Résolution de problèmes',count:'6 items'}
+];
+const VOC_DOMAINS=[
+  {id:'V1',name:'Préfixes et suffixes',count:'6 items'},
+  {id:'V2',name:'Familles de mots',count:'6 items'},
+  {id:'V3',name:'Sens et expressions',count:'6 items'},
+  {id:'V4',name:'Compréhension de texte',count:'6 items'}
+];
+function cardHTML(d,color){
+  const s=scores[d.id];
+  let badge;
+  if(!s)badge=`<span class="card-score score-todo">à faire</span>`;
+  else badge=`<span class="card-score" style="background:${color}">${s.bon}/${s.total} ✓</span>`;
+  return `<div class="card" onclick="launch('${d.id}')"><div class="card-num">${d.id}</div><div class="card-name">${d.name}</div><div style="font-size:11px;color:var(--text-muted)">${d.count}</div>${badge}</div>`;
+}
+function renderHome(){
+  document.getElementById('math-grid').innerHTML=MATH_DOMAINS.map(d=>cardHTML(d,'var(--bleu)')).join('');
+  document.getElementById('voc-grid').innerHTML=VOC_DOMAINS.map(d=>cardHTML(d,'var(--rouge)')).join('');
+}
+
+// ===================== LAUNCH =====================
+function launch(id){
+  const dom=MATH_DOMAINS.find(d=>d.id===id)||VOC_DOMAINS.find(d=>d.id===id);
+  const color=id.startsWith('V')?'#C8311B':'#1B3FA0';
+  navigate(()=>EXERCISES[id](), dom.name, color);
+}
+
+// ===================== EXERCISES =====================
+const EXERCISES={};
+
+// A1 Écriture des grands nombres
+EXERCISES.A1=function(){
+  const items=Array.from({length:6},()=>genA1());
+  inputScreen(items,{
+    domId:'A1',color:'#1B3FA0',inputType:'number',inputWidth:220,placeholder:'Tape le nombre…',
+    tts:it=>it.w,
+    getQ:()=>'Écris en chiffres le nombre que tu entends',
+    check:(raw,it)=>parseInt(raw,10)===it.n,
+    correctText:it=>String(it.n)
+  });
+};
+
+// A2 Fractions et décimaux
+EXERCISES.A2=function(){
+  const items=Array.from({length:6},()=>genA2());
+  inputScreen(items,{
+    domId:'A2',color:'#1B3FA0',inputType:'text',inputWidth:160,placeholder:'Ta réponse…',
+    getQ:it=>it.q,
+    check:(raw,it)=>numEq(parseNum(raw),it.ans),
+    correctText:it=>fmtNum(it.ans)
+  });
+};
+
+// A3 Droite graduée
+EXERCISES.A3=function(){
+  const items=Array.from({length:6},()=>genA3());
+  let idx=0,bon=0;
+  const body=document.getElementById('ex-body');
+  function prog(){return `<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${Math.round(idx/items.length*100)}%;background:#1B3FA0"></div></div>`;}
+  function render(){
+    if(idx>=items.length){saveScore('A3',bon,items.length);showScore(bon,items.length,'#1B3FA0');return;}
+    const it=items[idx];
+    const pct=(it.val-it.min)/(it.max-it.min);
+    const X1=60,X2=440,Y=60;
+    const px=X1+pct*(X2-X1);
+    let ticks='';
+    for(let v=it.min+it.step;v<it.max-1e-9;v+=it.step){
+      const tx=X1+(v-it.min)/(it.max-it.min)*(X2-X1);
+      ticks+=`<line x1="${tx}" y1="${Y-5}" x2="${tx}" y2="${Y+5}" stroke="#1A1A1A" stroke-width="1.5"/>`;
+    }
+    body.innerHTML=prog()+
+      `<p class="qcm-question">Quel nombre est indiqué par la flèche ?</p>
+      <svg class="grad-svg" viewBox="0 0 500 100" xmlns="http://www.w3.org/2000/svg">
+        <line x1="${X1}" y1="${Y}" x2="${X2}" y2="${Y}" stroke="#1A1A1A" stroke-width="2"/>
+        <line x1="${X1}" y1="${Y-8}" x2="${X1}" y2="${Y+8}" stroke="#1A1A1A" stroke-width="2"/>
+        <line x1="${X2}" y1="${Y-8}" x2="${X2}" y2="${Y+8}" stroke="#1A1A1A" stroke-width="2"/>
+        ${ticks}
+        <text x="${X1}" y="${Y+24}" text-anchor="middle" font-size="13" fill="#1A1A1A">${it.min}</text>
+        <text x="${X2}" y="${Y+24}" text-anchor="middle" font-size="13" fill="#1A1A1A">${it.max}</text>
+        <line x1="${px}" y1="${Y-20}" x2="${px}" y2="${Y}" stroke="#C8311B" stroke-width="2"/>
+        <polygon points="${px},${Y} ${px-5},${Y-12} ${px+5},${Y-12}" fill="#C8311B"/>
+        <text x="${px}" y="${Y-24}" text-anchor="middle" font-size="13" fill="#1B3FA0" font-weight="bold">?</text>
+      </svg>
+      <input class="text-input" type="text" id="a3-inp" style="max-width:140px" placeholder="?">
+      <div class="input-feedback" id="a3-fb"></div>
+      <button class="validate-btn" style="margin-top:8px" onclick="a3Val()">Valider</button>`;
+    document.getElementById('a3-inp').focus();
+    document.getElementById('a3-inp').addEventListener('keydown',e=>{if(e.key==='Enter')a3Val();});
+  }
+  window.a3Val=function(){
+    const val=parseNum(document.getElementById('a3-inp').value);
+    const it=items[idx];
+    const fb=document.getElementById('a3-fb');
+    if(numEq(val,it.val)){fb.textContent='✓ Correct !';fb.className='input-feedback ok';bon++;}
+    else{fb.innerHTML='✗ La réponse était '+fmtNum(it.val)+lessonHTML('A3');fb.className='input-feedback ko';}
+    document.getElementById('a3-inp').disabled=true;
+    document.querySelector('.validate-btn').disabled=true;
+    setTimeout(()=>{idx++;render();},1300);
+  };
+  render();
+};
+
+// A4 Comparaison et encadrement
+EXERCISES.A4=function(){
+  const items=Array.from({length:6},()=>genA4());
+  qcmScreen(items,i=>i.q,i=>i.choices,i=>i.correct,i=>i.expl,'#1B3FA0','A4');
+};
+
+// A5 Calcul mental
+EXERCISES.A5=function(){
+  const items=Array.from({length:6},()=>genA5());
+  inputScreen(items,{
+    domId:'A5',color:'#1B3FA0',inputType:'text',inputWidth:160,placeholder:'Ta réponse…',
+    getQ:it=>it.q,
+    check:(raw,it)=>numEq(parseNum(raw),it.ans),
+    correctText:it=>fmtNum(it.ans)
+  });
+};
+
+// A6 Périmètre, aire, volume
+EXERCISES.A6=function(){
+  const items=Array.from({length:6},()=>genA6());
+  inputScreen(items,{
+    domId:'A6',color:'#1B3FA0',inputType:'number',inputWidth:160,placeholder:'Ta réponse…',
+    getQ:it=>it.q,
+    check:(raw,it)=>numEq(parseNum(raw),it.ans),
+    correctText:it=>it.ans+' '+it.unit
+  });
+};
+
+// A7 Conversions d'unités
+EXERCISES.A7=function(){
+  const items=Array.from({length:6},()=>genA7());
+  inputScreen(items,{
+    domId:'A7',color:'#1B3FA0',inputType:'text',inputWidth:160,placeholder:'Ta réponse…',
+    getQ:it=>it.q,
+    check:(raw,it)=>numEq(parseNum(raw),it.ans),
+    correctText:it=>fmtNum(it.ans)
+  });
+};
+
+// A8 Angles et grandeurs
+EXERCISES.A8=function(){
+  const items=Array.from({length:6},()=>genA8());
+  qcmScreen(items,i=>i.q,i=>i.choices,i=>i.correct,i=>i.expl,'#1B3FA0','A8');
+};
+
+// P1 Résolution de problèmes
+EXERCISES.P1=function(){
+  const items=Array.from({length:6},()=>genP1());
+  inputScreen(items,{
+    domId:'P1',color:'#1B3FA0',inputType:'text',inputWidth:160,placeholder:'Ta réponse…',
+    getQ:it=>it.q,
+    check:(raw,it)=>numEq(parseNum(raw),it.ans),
+    correctText:it=>fmtNum(it.ans)
+  });
+};
+
+// V1 Préfixes et suffixes
+EXERCISES.V1=function(){
+  const items=pickN(V1_BANK,6);
+  qcmScreen(items,i=>i.q,i=>i.choices,i=>i.correct,i=>i.expl,'#C8311B','V1');
+};
+
+// V2 Familles de mots
+EXERCISES.V2=function(){
+  const items=pickN(V2_BANK,6);
+  qcmScreen(items,i=>i.q,i=>i.choices,i=>i.correct,i=>i.expl,'#C8311B','V2');
+};
+
+// V3 Sens et expressions
+EXERCISES.V3=function(){
+  const items=pickN(V3_BANK,6);
+  qcmScreen(items,i=>i.q,i=>i.choices,i=>i.correct,i=>i.expl,'#C8311B','V3');
+};
+
+// V4 Compréhension de texte
+EXERCISES.V4=function(){
+  const items=pickN(V4_BANK,6);
+  qcmScreen(items,i=>'<div class="mini-text">'+i.text+'</div>'+i.q,i=>i.choices,i=>i.correct,i=>i.expl,'#C8311B','V4');
+};
+
+// ===================== INIT =====================
+renderHome();
+</script>
+</body>
+</html>
